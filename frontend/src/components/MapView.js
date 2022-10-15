@@ -1,13 +1,70 @@
 import { MapContainer, TileLayer, GeoJSON, ZoomControl } from 'react-leaflet'
 import casesService from '../services/cases'
 import { useState, useEffect } from 'react'
-import { Box, Center, Container } from '@chakra-ui/react'
+import { Box, Text, Icon, List, ListItem, HStack } from '@chakra-ui/react'
+
+// 1 to 10, 11 to 50, 51 to 100, 101 to 500, and >500
+
+const CircleIcon = (props) => (
+    <Icon viewBox='0 0 200 200' {...props}>
+        <path
+            fill='currentColor'
+            d='M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0'
+            stroke='black'
+            strokeWidth={6}
+        />
+    </Icon>
+)
 
 const Legend = () => {
     console.log('rendering legend')
     return (
-        <Box bg='red' color='white' zIndex={3} py={15}>
-            Hello world
+        <Box 
+            position='absolute' 
+            top='35%' 
+            right='3%' 
+            alignItems='center' 
+            bg='rgba(250,250,250,0.8)' 
+            color='black' 
+            zIndex={15} 
+            p={15}
+            display={['none', 'none', 'block', 'block']}
+        >
+            <Text pb={2}>
+                Confirmed Cases
+            </Text>
+            <List spacing={3}>
+                <ListItem>
+                    <HStack>
+                        <CircleIcon boxSize={4} color='#EBFCF9' />
+                        <Text>1-10</Text>
+                    </HStack>
+                </ListItem>
+                <ListItem>
+                    <HStack>
+                        <CircleIcon boxSize={4} color='#ACF5E9' />
+                        <Text>11-50</Text>
+                    </HStack>
+                </ListItem>
+                <ListItem>
+                    <HStack>
+                        <CircleIcon boxSize={4} color='#5BD4C0' />
+                        <Text>51-100</Text>
+                    </HStack>
+                </ListItem>
+                <ListItem>
+                    <HStack>
+                        <CircleIcon boxSize={4} color='#399BC6' />
+                        <Text>51-100</Text>
+                    </HStack>
+                </ListItem>
+                <ListItem>
+                    <HStack>
+                        <CircleIcon boxSize={4} color='#0E6495' />
+                        <Text>{'>'}500</Text>
+                    </HStack>
+                </ListItem>
+            </List>
         </Box>
     )
 }
@@ -63,5 +120,5 @@ const MapView = () => {
     )
 }
 
-const Map = {MapView, Legend}
+const Map = { MapView, Legend }
 export default Map
