@@ -9,6 +9,7 @@ const Home = () => {
     <Container minWidth='full' minHeight='full' p={0}>
       <Map.Legend />
       <Map.MapView />
+      <Map.StatesDataTable />
     </Container>
   )
 }
