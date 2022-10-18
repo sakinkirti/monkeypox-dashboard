@@ -4,11 +4,9 @@ import {
     StatNumber,
     StatArrow,
     StatGroup,
-    HStack,
     VStack,
     Flex,
-    Heading,
-    extendTheme
+    Heading
 } from '@chakra-ui/react'
 
 const PredictiveStatTable = (props) => {
@@ -26,34 +24,44 @@ const PredictiveStatTable = (props) => {
             p={4}
             bg='rgba(250,250,250,0.8)'
             color='black'
-            display={['none', 'none', 'none', 'flex']}>
+            display={['none', 'none', 'none', 'flex']}
+        >
             <Heading size='sm'>{props.heading}</Heading>
             <StatGroup>
-                <Flex justify="space-between" flex="1" gap={4}>
+                <Flex justifyContent="space-between" flex="1" gap={4}>
                     <Stat>
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Prevalance Rate</StatLabel>
-                        <StatNumber>
-                            <StatArrow type={'increase'} />
-                            1.2%
-                        </StatNumber>
+                        <Flex justifyContent='center'>
+                            <StatNumber>
+                                <StatArrow type={'increase'} />
+                                1.2%
+                            </StatNumber>
+                        </Flex>
+
                     </Stat>
                     <Stat>
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Incidence Rate</StatLabel>
-                        <StatNumber>
-                            <StatArrow type={'decrease'} />
-                            0.5%
-                        </StatNumber>
+                        <Flex justifyContent='center'>
+                            <StatNumber>
+                                <StatArrow type={'decrease'} />
+                                0.5%
+                            </StatNumber>
+                        </Flex>
+
                     </Stat>
                     <Stat>
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Case-fatality Ratio</StatLabel>
-                        <StatNumber>
-                            <StatArrow type={'increase'} />
-                            0.9%
-                        </StatNumber>
+                        <Flex justifyContent='center'>
+                            <StatNumber>
+                                <StatArrow type={'increase'} />
+                                0.9%
+                            </StatNumber>
+                        </Flex>
+
                     </Stat>
                 </Flex>
             </StatGroup>
-        </VStack >
+        </VStack>
 
     )
 }
