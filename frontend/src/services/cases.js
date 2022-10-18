@@ -14,9 +14,9 @@ const getStateFlags = async () => {
     return response.data
 }
 
-const service = {
+const caseService = {
     getStateCases,
     getStateFlags
 }
 
-export default service
+export default caseService
