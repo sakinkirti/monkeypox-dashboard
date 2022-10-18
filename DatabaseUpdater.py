@@ -29,9 +29,6 @@ class DatabaseUpdater:
         self.dbname = "monkeypox-db"
 
         # user and pass to connect
-        # to reduce overcomplication, with this short project, we made one user which we all access the db from
-        # since the data is easily recoverable from the public api, we are not worried about incorrect updates
-        # or lost data
         self.user = "monkeypox-admin"
         self.token = "dashboard123"
 
@@ -40,6 +37,7 @@ class DatabaseUpdater:
 
         # store the new data to update
         self.new_data
+        self.tables = ["confirmed_counts", "ph_stats"]
 
     def db_connect(self):
         """
@@ -91,9 +89,35 @@ class DatabaseUpdater:
         # generate the cursor
         cursor = self.conn.cursor()
 
-        # write the necessary queries to update the db
-        cursor.execute(
-            """
+        # first clear the tables
+        cursor.execute("DELETE from case_counts")
+        cursor.execute("DELETE from ph_stats")
 
-            """
-        )
+        # write the new tables using the 'fill_table' helper method
+        for df, table in zip(self.new_data, self.tables):
+            self.fill_table(df, table, cursor)
+
+    def fill_table(self, df, table, cursor):
+        """
+        general helper method to update each specific table
+
+        params:
+        df: pd.DataFrame - the dataframe to fill a table with
+        table: str - the name of the table to populate
+        cursor: psycopg2.connection.cursor - the cursor to execute the commands with
+        """
+
+        # data to insertable format
+        tuples = [tuple(x) for x in df.to_numpy()]
+        cols = ','.join(list(df.columns))
+
+        # SQL query to execute
+        query = "INSERT INTO %s(%s) VALUES %%s" % (table, cols)
+
+        # execute
+        try:
+            psycopg2.extras.execute_values(cursor, query, tuples)
+            self.conn.commit()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print("Error: %s" % error)
+            self.conn.rollback()
