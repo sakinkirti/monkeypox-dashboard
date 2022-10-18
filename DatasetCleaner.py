@@ -61,7 +61,10 @@ class DatasetCleaner:
         temp = temp.drop(columns=[column for column in temp.columns if "Source" in column])
 
         # drop other irrelevant columns
-        temp = temp.drop(columns=["Date_onset", "Symptoms", "Date_isolation", "Confirmation_method", "Genomics_Metadata", "Date_hospitalisation", "Contact_ID", "Contact_comment", "Contact_location"])
+        temp = temp.drop(
+            columns=["Date_onset", "Symptoms", "Date_isolation", "Confirmation_method", "Genomics_Metadata", "Date_hospitalisation", 
+                     "Contact_ID", "Contact_comment", "Contact_location"]
+        )
 
         # add column denoting whether the case is given or predicted
         temp["prediction"] = "no"
