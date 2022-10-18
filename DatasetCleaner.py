@@ -13,7 +13,7 @@ class DatasetCleaner:
     class to clean the given data
     """
 
-    def __init__(self, data: pd.DataFrame):
+    def __init__(self, data: str):
         """
         initialize the object
 
@@ -21,7 +21,17 @@ class DatasetCleaner:
         data - the pandas.DataFrame to clean (should be the Global.Health dataset)
         """
 
-        self.raw_data = data
+        # storage for data
+        self.raw_data = pd.read_csv(data)
+        self.cleaned_data
+
+    def retrieve_cleaned_data(self):
+        """
+        method to get the cleaned data from the object
+        """
+
+        # return the cleaned data
+        return self.cleaned_data
 
     def wrangle(self):
         """
