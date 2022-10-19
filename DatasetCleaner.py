@@ -1,16 +1,12 @@
 import pandas as pd
 
-"""
-authors: Sakin Kirti, Saketh Dendi, and Felix Huang
-since 10/13/2022
-
-The DatasetCleaner takes a database given by the DatabaseUpdater and cleans the data to make it easily workable.
-It returns this database to the DatabaseUpdater to update in the local database.
-"""
-
 class DatasetCleaner:
     """
-    class to clean the given data
+    authors: Sakin Kirti, Saketh Dendi, and Felix Huang
+    since 10/13/2022
+
+    The DatasetCleaner takes a database given by the DatabaseUpdater and cleans the data to make it easily workable.
+    It returns this database to the DatabaseUpdater to update in the local database.
     """
 
     def __init__(self, data: str):
