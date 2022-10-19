@@ -1,4 +1,5 @@
 import psycopg2
+from psycopg2 import extras
 
 from DatasetCleaner import DatasetCleaner as DC
 
@@ -11,7 +12,7 @@ class DatabaseUpdater:
     it with values from the udpated Global.Health source.
     """
 
-    def __init__(self) -> None:
+    def __init__(self):
         """
         the init method which specifies the variables to connect to the db
         """
@@ -20,17 +21,14 @@ class DatabaseUpdater:
         self.endpoint = "monkeypox-db.cjmhlqzkirpm.us-east-1.rds.amazonaws.com"
         self.port = "5432"
         self.region = "us-east-1c"
-        self.dbname = "monkeypox-db"
+        self.dbname = "postgres"
 
         # user and pass to connect
-        self.user = "monkeypox-admin"
+        self.user = "monkeypox_admin"
         self.token = "dashboard123"
 
-        # store the db connection
-        self.conn
-
         # store the new data to update
-        self.new_data
+        self.new_data = None
         self.tables = ["confirmed_counts", "ph_stats"]
 
     def db_connect(self):
@@ -40,21 +38,20 @@ class DatabaseUpdater:
         """
 
         # make the connection to the db
-        try:
-            self.conn = psycopg2.connect(host=self.endpoint, port=self.port, database=self.dbname, user=self.user, password=self.token)
-        except Exception as e:
-            print("Database connection failed due to: {}".format(e))
+        return psycopg2.connect(
+            database=self.dbname,
+            user=self.user, 
+            password=self.token,
+            host=self.endpoint, 
+            port=self.port)
 
-    def db_disconnect(self):
+    def db_disconnect(self, connection):
         """
         method to disconnect from the db once any actions to complete are done
         """
 
         # close the db connection
-        try:
-            self.conn.close()
-        except Exception as e:
-            print("Database connection failed due to: {}".format(e))
+        connection.close()
 
     def get_globalhealth_data(self):
         """
@@ -66,32 +63,42 @@ class DatabaseUpdater:
 
         # clean the data and calcualte ph stats
         cleaner.wrangle()
-        cleaner.generate_ph_stats()
+        # cleaner.generate_ph_stats()
 
         # generate predictions
-        cleaner.predict_cases()
-        cleaner.predict_ph_stats()
+        #cleaner.predict_cases()
+        #cleaner.predict_ph_stats()
 
         # store the data
         self.new_data = cleaner.retrieve_cleaned_data()
 
-    def db_update(self):
+    def db_update(self, data=None, table=None):
         """
         method to update the database
         """
 
-        # generate the cursor
-        cursor = self.conn.cursor()
+        # connect to db generate the cursor
+        conn = self.db_connect()
+        cursor = conn.cursor()
 
-        # first clear the tables
-        cursor.execute("DELETE from case_counts")
-        cursor.execute("DELETE from ph_stats")
+        if data is not None and table is not None:
+            # clear the specified table
+            cursor.execute(f"DELETE from {table}")
 
-        # write the new tables using the 'fill_table' helper method
-        for df, table in zip(self.new_data, self.tables):
-            self.fill_table(df, table, cursor)
+            # fill the table
+            self.fill_table(data, table, conn, cursor)
+        elif data is None and table is None:
+            # first clear the tables
+            cursor.execute("DELETE from case_counts")
+            cursor.execute("DELETE from ph_stats")
 
-    def fill_table(self, df, table, cursor):
+            # fill both tables
+            for df, table in zip(self.new_data, self.tables):
+                self.fill_table(df, table, conn, cursor)
+
+        self.db_disconnect(conn)
+
+    def fill_table(self, df, table, connection, cursor):
         """
         general helper method to update each specific table
 
@@ -110,8 +117,8 @@ class DatabaseUpdater:
 
         # execute
         try:
-            psycopg2.extras.execute_values(cursor, query, tuples)
-            self.conn.commit()
+            extras.execute_values(cursor, query, tuples)
+            connection.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print("Error: %s" % error)
-            self.conn.rollback()
+            connection.rollback()
