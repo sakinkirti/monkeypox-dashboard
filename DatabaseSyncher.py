@@ -15,13 +15,16 @@ import time
 from DatabaseUpdater import DatabaseUpdater as du
 
 class DatabaseSyncher:
+
+    def __init__(self):
+        pass
     
-    def job():
+    def job(self):
         print("I'm working...")
 
-    def synchTimer():
+    def synchTimer(self):
 
-        schedule.every().day.at("10:30").do(job)
+        schedule.every().day.at("10:30").do(self.job())
         schedule.every().day.at("11:30").do(du.db_connect)
         schedule.every().day.at("11:30").do(du.db_connect)
 

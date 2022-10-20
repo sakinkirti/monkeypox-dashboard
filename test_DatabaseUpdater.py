@@ -2,10 +2,12 @@ from unittest import TestCase
 import pandas as pd
 
 from DatabaseUpdater import DatabaseUpdater as DU
-from DatabaseSyncher import DatabaseSyncher as DS
 
 class test_DatabaseUpdater(TestCase):
     """
+    author: Sakin Kirti
+    date: 10/19/2022
+
     class to test the methods in DatabaseUpdater
     
     superclass: unittest.TestCase
@@ -56,12 +58,3 @@ class test_DatabaseUpdater(TestCase):
         updater.db_update(dummy_df, "case_counts")
 
         # check manually to make sure the method works
-
-    def test_synchTimer(self):
-        """
-        test the method to update the database
-        """
-        syncher = DS()
-        syncher.synchTimer()
-
-        self.assertTrue(syncher.synchTime is "10:30")
