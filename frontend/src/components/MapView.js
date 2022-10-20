@@ -12,6 +12,7 @@ import {
 
 const MapView = () => {
     const [statesData, setStatesData] = useState([])
+
     useEffect(() => {
         casesService.getStateCases().then(data =>
             setStatesData(data)
@@ -25,9 +26,11 @@ const MapView = () => {
             minZoom={3}
             maxZoom={10}
             zoomControl={false}
-            zoomSnap={0.5}
-            zoomDelta={0.5}
+            zoomSnap={0.75}
+            zoomDelta={0.75}
             scrollWheelZoom={true}
+            maxBounds={[[-5, -225], [75, 0]]}
+            maxBoundsViscoity={1}
         >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -100,7 +103,7 @@ const Legend = (positions) => {
                 <ListItem>
                     <HStack>
                         <CircleIcon boxSize={4} color='#399BC6' />
-                        <Text>101-00</Text>
+                        <Text>101-500</Text>
                     </HStack>
                 </ListItem>
                 <ListItem>
