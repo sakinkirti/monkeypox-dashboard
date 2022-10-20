@@ -1,0 +1,7 @@
+# cache and testing cache files shouldn't be stored
+/__pycache__
+/.pytest_cache
+/.vscode
+
+# other cached
+/.DS_store

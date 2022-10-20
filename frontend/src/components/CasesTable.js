@@ -12,6 +12,7 @@ import {
 const CasesTable = (positions) => {
     const [stateFlags, setStateFlags] = useState([])
     const [statesData, setStatesData] = useState([])
+    
     useEffect(() => {
         casesService.getStateCases().then(data => {
             const reformatted = data.features.map(state => {

@@ -57,12 +57,10 @@ const PredictiveStatTable = (props) => {
                                 0.9%
                             </StatNumber>
                         </Flex>
-
                     </Stat>
                 </Flex>
             </StatGroup>
         </VStack>
-
     )
 }
 
