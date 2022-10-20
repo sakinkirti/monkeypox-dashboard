@@ -8,3 +8,23 @@ if calls the DatabaseUpdater Class to update our local database based on Global.
 
 It also contains a backup method in case the cron timer fails to update the database when needed.
 """
+
+import schedule
+import time
+
+from DatabaseUpdater import DatabaseUpdater as du
+
+class DatabaseSyncher:
+    
+    def job():
+        print("I'm working...")
+
+    def synchTimer():
+
+        schedule.every().day.at("10:30").do(job)
+        schedule.every().day.at("11:30").do(du.db_connect)
+        schedule.every().day.at("11:30").do(du.db_connect)
+
+        while 1:
+            schedule.run_pending()
+            time.sleep(1)
