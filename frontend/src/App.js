@@ -5,6 +5,7 @@ import Navbar from './components/Navbar'
 import CasesTable from './components/CasesTable'
 import PredictiveStatTable from './components/PredictiveStatTable'
 import { Container, Flex } from '@chakra-ui/react'
+import React from 'react'
 
 const Home = () => {
   return (
@@ -19,7 +20,6 @@ const Home = () => {
           heading={'National Predictive Statistics Changes For Next Week'}
         />
       </Flex>
-
     </Container>
   )
 }

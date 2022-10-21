@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, GeoJSON, ZoomControl } from 'react-leaflet'
 import casesService from '../services/cases'
-import { useState, useEffect } from 'react'
+import { React, useState, useEffect } from 'react'
 import {
     Box,
     Text,
@@ -29,7 +29,7 @@ const MapView = () => {
             zoomSnap={0.75}
             zoomDelta={0.75}
             scrollWheelZoom={true}
-            maxBounds={[[-5, -225], [75, 0]]}
+            maxBounds={[[-5, -260], [75, 40]]}
             maxBoundsViscoity={1}
         >
             <TileLayer

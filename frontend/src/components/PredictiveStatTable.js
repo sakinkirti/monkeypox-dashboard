@@ -1,3 +1,4 @@
+import React from 'react'
 import {
     Stat,
     StatLabel,
@@ -30,7 +31,7 @@ const PredictiveStatTable = (props) => {
             <StatGroup>
                 <Flex justifyContent="space-between" flex="1" gap={4}>
                     <Stat>
-                        <StatLabel whiteSpace='nowrap' color='gray.600'>Prevalance Rate</StatLabel>
+                        <StatLabel whiteSpace='nowrap' color='gray.600'>Prevalence Rate</StatLabel>
                         <Flex justifyContent='center'>
                             <StatNumber>
                                 <StatArrow type={'increase'} />
