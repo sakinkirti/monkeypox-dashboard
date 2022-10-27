@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import { describe, expect, jest, test } from '@jest/globals'
 import Map from '../components/MapView'
 import PredictiveStatTable from '../components/PredictiveStatTable'
+import Cases from '../components/CasesTable'
 
 jest.mock('../App', () => ({ App: () => 'mocked mapview' }))
 
@@ -28,6 +29,19 @@ describe('Prediction Table Rendering', () => {
         expect(prevRate).toBeDefined()
         const incidence = screen.getByText('Incidence Rate')
         expect(incidence).toBeDefined()
+    })
+})
+
+describe('State Cases Table', () => {
+    test('Cases Table Rendered', () => {
+        render(<Cases.CasesTable />)
+        const heading = screen.getAllByText('States By Confirmed Cases')
+        expect(heading).toBeDefined()
+    })
+    test('US Total Table Rendered', () => {
+        render(<Cases.USTable />)
+        const heading = screen.getAllByText('U.S. Total Confirmed Cases')
+        expect(heading).toBeDefined()
     })
 })
 

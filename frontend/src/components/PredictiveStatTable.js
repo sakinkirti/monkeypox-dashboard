@@ -38,7 +38,6 @@ const PredictiveStatTable = (props) => {
                                 1.2%
                             </StatNumber>
                         </Flex>
-
                     </Stat>
                     <Stat>
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Incidence Rate</StatLabel>
@@ -48,7 +47,6 @@ const PredictiveStatTable = (props) => {
                                 0.5%
                             </StatNumber>
                         </Flex>
-
                     </Stat>
                     <Stat>
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Case-fatality Ratio</StatLabel>

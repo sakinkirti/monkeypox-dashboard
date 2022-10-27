@@ -2,9 +2,9 @@ import { Routes, Route } from 'react-router-dom'
 import Map from './components/MapView'
 import ChartView from './components/ChartView'
 import Navbar from './components/Navbar'
-import CasesTable from './components/CasesTable'
+import Cases from './components/CasesTable'
 import PredictiveStatTable from './components/PredictiveStatTable'
-import { Container, Flex } from '@chakra-ui/react'
+import { Container, Flex, VStack } from '@chakra-ui/react'
 import React from 'react'
 
 const Home = () => {
@@ -12,7 +12,19 @@ const Home = () => {
     <Container minWidth='full' minHeight='full' p={0}>
       <Map.Legend top={'35%'} right={'3%'} />
       <Map.MapView />
-      <CasesTable top={'30%'} left={'3%'} />
+      <Container
+        p={0}
+        ml={16}
+        zIndex={20}
+        display={['none', 'none', 'block', 'block']}
+        maxWidth={'300px'}
+        centerContent
+      >
+        <VStack>
+          <Cases.CasesTable top={'35%'} />
+          <Cases.USTable top={'20%'} />
+        </VStack>
+      </Container>
       <Flex minWidth='full' minHeight='full' p={0} justifyContent='center'>
         <PredictiveStatTable
           bottom={'3%'}

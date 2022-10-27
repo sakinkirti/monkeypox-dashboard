@@ -18,11 +18,14 @@ describe('State Cases Call', () => {
 describe('State Flags Call', () => {
     test('Get Flags Data', async () => {
         const res = await caseService.getStateFlags()
-        expect(res).toHaveLength(50)
+        expect(res).toHaveLength(52)
         expect(res[0]).toHaveProperty("state_flag_url")
         expect(res[0].state).toBe("Alabama")
         expect(res[48].state).toBe("Wisconsin")
         expect(res[49].state).toBe("Wyoming")
+    })
+    test('Puerto Rico and DC added', async () => {
+        const res = await caseService.getStateFlags()
     })
     test('Has Flags Url', async () => {
         const res = await caseService.getStateFlags()

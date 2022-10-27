@@ -6,20 +6,21 @@ import {
     Table,
     Tbody,
     Tr,
-    Td
+    Td,
+    Text
 } from '@chakra-ui/react'
 
 const CasesTable = (positions) => {
     const [stateFlags, setStateFlags] = useState([])
     const [statesData, setStatesData] = useState([])
-    
+
     useEffect(() => {
         casesService.getStateCases().then(data => {
             const reformatted = data.features.map(state => {
                 return ({ name: state.properties.name, density: state.properties.density })
             }).sort((a, b) => {
                 return b.density - a.density
-            }).filter(state => state.name !== 'District of Columbia' && state.name !== 'Puerto Rico')
+            })
             setStatesData(reformatted)
         })
     }, [])
@@ -27,7 +28,7 @@ const CasesTable = (positions) => {
     useEffect(() => {
         casesService.getStateFlags().then(data => {
             const flags = data.map(state => {
-                return ({name: state.state, flag: state.state_flag_url})
+                return ({ name: state.state, flag: state.state_flag_url })
             })
             setStateFlags(flags)
         })
@@ -37,8 +38,6 @@ const CasesTable = (positions) => {
         <Box
             position='absolute'
             top={positions.top}
-            left={positions.left}
-            alignContent='center'
             p={4}
             bg='rgba(250,250,250,0.8)'
             color='black'
@@ -53,14 +52,14 @@ const CasesTable = (positions) => {
                             const flagUrl = stateFlags.find(stateFlag => stateFlag.name === state.name).flag
                             return (
                                 <Tr key={state.name}>
-                                    <Td p={0}>
-                                        <img 
+                                    <Td p={2}>
+                                        <img
                                             src={flagUrl}
                                             alt={state.name}
                                         />
                                     </Td>
-                                    <Td>{state.name}</Td>
-                                    <Td>{state.density}</Td>
+                                    <Td p={4} whiteSpace='nowrap'>{state.name}</Td>
+                                    <Td p={4}>{state.density}</Td>
                                 </Tr>
                             )
                         }))}
@@ -71,4 +70,28 @@ const CasesTable = (positions) => {
     )
 }
 
-export default CasesTable
+const USTable = (positions) => {
+    const [cases, setCases] = useState(null)
+    // replace with pull from db
+    useEffect(() => {
+        setCases(10000)
+    }, [])
+
+    return (
+        <Box
+            position='absolute'
+            top={positions.top}
+            p={4}
+            bg='rgba(250,250,250,0.8)'
+            color='black'
+            zIndex={15}
+            display={['none', 'none', 'block', 'block']}
+        >
+            <Heading fontSize={20} pb={5} textAlign='center' as='b'>U.S. Total Confirmed Cases</Heading>
+            <Text fontSize={20} textAlign='center'>{cases}</Text>
+        </Box>
+    )
+}
+
+const Cases = { CasesTable, USTable }
+export default Cases
