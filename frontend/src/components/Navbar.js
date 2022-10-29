@@ -30,7 +30,7 @@ const Navbar = () => {
                                 <Link to='/'>Map</Link>
                             </Button>
                             <Button color='gray.700'>
-                                <Link to='/chartsview'>Charts</Link>
+                                <Link to='/charts'>Charts</Link>
                             </Button>
                             <Button color='gray.700'>
                                 <Link to='/help'>Help</Link>

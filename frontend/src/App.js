@@ -42,7 +42,7 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/chartsview" element={<ChartView />} />
+        <Route path="/charts" element={<ChartView />} />
       </Routes>
     </Container>
   )
