@@ -49,7 +49,7 @@ const CasesTable = (positions) => {
                 <Table variant="simple">
                     <Tbody maxWidth='full' fontSize={14}>
                         {statesData.map((state => {
-                            const flagUrl = stateFlags.find(stateFlag => stateFlag.name === state.name).flag
+                            const flagUrl = stateFlags?.find(stateFlag => stateFlag.name === state.name)?.flag
                             return (
                                 <Tr key={state.name}>
                                     <Td p={2}>
