@@ -1,6 +1,7 @@
 import { React } from 'react'
 import { LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Line, Legend } from 'recharts'
 import { Container, Text, Divider, Icon, HStack } from '@chakra-ui/react'
+import Cases from './CasesTable'
 
 const sampleData = [
     { day: "Feb 20, 2022", cases: 102, PR: "0.4%", IR: "1.2%", CFR: "3.0%" },
@@ -28,22 +29,35 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const ChartView = () => {
     return (
-        <Container minWidth='100%' minHeight='100vh' pt={32} display={['none', 'none', 'none', 'flex']} centerContent>
-            <ResponsiveContainer position='absolute' minHeight="70vh" width="60%" zIndex={25}>
-                <LineChart
-                    width={500}
-                    height={500}
-                    data={sampleData}
-                    margin={{ top: 30, right: 30, left: 30, bottom: 30 }}
-                >
-                    <XAxis dataKey="day" />
-                    <YAxis dataKey="cases" />
-                    <Tooltip wrapperStyle={{ outline: 'none', borderWidth: 1, borderColor: 'black', borderRadius: 4 }} content={<CustomTooltip />} />
-                    <Legend verticalAlign="bottom" height={36} margin={{ top: 30, right: 30, left: 30, bottom: 30 }} />
-                    <Line name="Number of Confirmed Cases" type="monotone" dataKey="cases" stroke="#0E6495" />
-                </LineChart>
-            </ResponsiveContainer>
+        <Container minWidth='full' minHeight='full' p={0} zIndex={25}>
+            <Container
+                p={0}
+                ml={8}
+                zIndex={20}
+                display={['none', 'none', 'none', 'flex']}
+                maxWidth={'300px'}
+                centerContent
+            >
+                <Cases.CasesTable top={'30%'} left='35%' />
+            </Container>
+            <Container minWidth='100%' minHeight='100vh' pt={40} pl={16} display={['none', 'none', 'flex', 'flex']} centerContent>
+                <ResponsiveContainer position='absolute' minHeight="70vh" width="60%" zIndex={25}>
+                    <LineChart
+                        width={500}
+                        height={500}
+                        data={sampleData}
+                        margin={{ top: 30, right: 30, left: 30, bottom: 30 }}
+                    >
+                        <XAxis dataKey="day" />
+                        <YAxis dataKey="cases" />
+                        <Tooltip wrapperStyle={{ outline: 'none', borderWidth: 1, borderColor: 'black', borderRadius: 4 }} content={<CustomTooltip />} />
+                        <Legend verticalAlign="bottom" height={36} margin={{ top: 30, right: 30, left: 30, bottom: 30 }} />
+                        <Line name="Number of Confirmed Cases" type="monotone" dataKey="cases" stroke="#0E6495" />
+                    </LineChart>
+                </ResponsiveContainer>
+            </Container>
         </Container>
+
     )
 }
 /* d="M 0,16 h 10.666666666666666
@@ -54,10 +68,10 @@ const LineIcon = (props) => {
     return (
         <Icon viewBox='0 0 200 200' {...props}>
             <path
-            strokeWidth={20}
-            fill="none" 
-            stroke="#0E6495"
-            d="M 0, 90 h 60
+                strokeWidth={20}
+                fill="none"
+                stroke="#0E6495"
+                d="M 0, 90 h 60
             A 30, 30, 0, 1, 1, 120, 90
             H 180 M 120, 90
             A 30, 30, 0, 1, 1, 60, 90"></path>
