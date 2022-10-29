@@ -19,7 +19,7 @@ const CustomTooltip = ({ active, payload, label }) => {
                     <Text color='#0E6495'>{`Case count: ${payload[0].payload.cases}`}</Text>
                 </HStack>
                 <Divider borderColor='black' my={2} />
-                <Text >{`Prevalence Rate: ${payload[0].payload.PR}`}</Text>
+                <Text color='#399BC6'>{`Prevalence Rate: ${payload[0].payload.PR}`}</Text>
                 <Text color='#00AEEA'>{`Incidence Rate: ${payload[0].payload.IR}`}</Text>
                 <Text color='#57BFBA'>{`Case-fatality Ratio: ${payload[0].payload.CFR}`}</Text>
             </Container>
@@ -60,10 +60,7 @@ const ChartView = () => {
 
     )
 }
-/* d="M 0,16 h 10.666666666666666
-A 5.333333333333333, 5.333333333333333, 0, 1, 1, 21.333333333333332, 16
-H 32 M 21.333333333333332, 16
-A 5.333333333333333, 5.333333333333333, 0, 1, 1, 10.666666666666666, 16"*/
+
 const LineIcon = (props) => {
     return (
         <Icon viewBox='0 0 200 200' {...props}>
