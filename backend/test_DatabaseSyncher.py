@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from DatabaseSyncher import DatabaseSyncher as DS
+from backend.DatabaseSyncher import DatabaseSyncher as DS
 
 class test_DatabaseSyncher:   
     """
