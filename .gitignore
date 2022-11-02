@@ -3,5 +3,8 @@
 /.pytest_cache
 /.vscode
 
+# backend components
+/backend/__pycache__
+
 # other cached
 /.DS_store
