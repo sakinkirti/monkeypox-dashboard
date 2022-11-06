@@ -122,3 +122,8 @@ class DatabaseUpdater:
         except (Exception, psycopg2.DatabaseError) as error:
             print("Error: %s" % error)
             connection.rollback()
+
+    def updateDataframe(self, df):
+        self.set_index('case_counts', inplace = True)
+        self.update(df.set_Index('case_counts'))
+        self.reset_index()
