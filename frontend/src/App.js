@@ -10,11 +10,11 @@ import React from 'react'
 const Home = () => {
   return (
     <Container minWidth='full' minHeight='full' p={0}>
-      <Map.Legend top={'35%'} right={'3%'} />
+      <Map.Legend top={'35%'} right={'2%'} />
       <Map.MapView />
       <Container
         p={0}
-        ml={16}
+        ml={12}
         zIndex={20}
         display={['none', 'none', 'block', 'block']}
         maxWidth={'300px'}
@@ -36,13 +36,31 @@ const Home = () => {
   )
 }
 
+const Chart = () => {
+  return (
+    <Container minWidth='full' minHeight='full' p={0}>
+      <Container
+        p={0}
+        ml={8}
+        zIndex={20}
+        display={['none', 'none', 'none', 'flex']}
+        maxWidth={'300px'}
+        centerContent
+      >
+        <Cases.CasesTable top={'30%'} left='35%' />
+      </Container>
+      <ChartView />
+    </Container>
+  )
+}
+
 const App = () => {
   return (
     <Container minWidth='full' minHeight='full' p={0}>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/charts" element={<ChartView />} />
+        <Route path="/charts" element={<Chart />} />
       </Routes>
     </Container>
   )

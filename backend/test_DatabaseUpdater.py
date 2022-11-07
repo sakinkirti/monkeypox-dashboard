@@ -25,8 +25,9 @@ class test_DatabaseUpdater(TestCase):
         updater = DU()
 
         # test the connect and disconnect
-        self.assertTrue(False if updater.db_connect() is Exception else True)
-        self.assertTrue(False if updater.db_disconnect() is Exception else True)
+        conn = updater.db_connect()
+        self.assertTrue(False if conn is Exception else True)
+        self.assertTrue(False if updater.db_disconnect(conn) is Exception else True)
 
     def test_get_globalhealth_data(self):
         """
@@ -57,4 +58,6 @@ class test_DatabaseUpdater(TestCase):
         updater = DU()
         updater.db_update(dummy_df, "case_counts")
 
-        # check manually to make sure the method works
+# manual tests
+updater = DU()
+updater.get_globalhealth_data()
