@@ -9,7 +9,7 @@ class DatabaseUpdater:
     since: 10/13/2022  
 
     The DatabaseUpdater gets called from the DatabaseSyncher. It updates the local database, populating
-    it with values from the udpated Global.Health source.
+    it with values from the udpated Global.Health and CDC source.
     """
 
     def __init__(self):
@@ -53,27 +53,25 @@ class DatabaseUpdater:
         # close the db connection
         connection.close()
 
-    def get_globalhealth_data(self):
+    def get_data(self):
         """
         method to get the cleaned global health data
         """
 
         # generate the cleaner object
         cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
-                     seven_day_avg = "https://www.cdc.gov/poxvirus/monkeypox/modules/data-viz/mpx-cases-trend-7day.json",
-                     country_time_series="https://raw.githubusercontent.com/gridviz/monkeypox/main/data/processed/monkeypox_cases_derived_timeseries_latest.csv",
                      globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
                      full_update=False)
 
         # clean the data and calcualte ph stats
-        # cleaner.generate_ph_stats()
+        cleaner.generate_ph_stats()
 
         # generate predictions
         #cleaner.predict_cases()
         #cleaner.predict_ph_stats()
 
         # store the data
-        # self.new_data = cleaner.retrieve_cleaned_data()
+        self.new_data = cleaner.retrieve_cleaned_data()
 
     def db_retreive(self, table):
         """

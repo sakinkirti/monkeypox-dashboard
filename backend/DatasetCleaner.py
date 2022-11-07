@@ -1,7 +1,6 @@
 import datetime
 import pandas as pd
-import requests
-import json
+import random
 
 class DatasetCleaner:
     """
@@ -12,7 +11,7 @@ class DatasetCleaner:
     It returns this database to the DatabaseUpdater to update in the local database.
     """
 
-    def __init__(self, state_totals: str, seven_day_avg: str, country_time_series: str, globalhealth_data: str, full_update: bool):
+    def __init__(self, state_totals: str, globalhealth_data: str, full_update: bool):
         """
         initialize the object
 
@@ -20,20 +19,18 @@ class DatasetCleaner:
         data - the pandas.DataFrame to clean (should be the Global.Health dataset)
         """
 
-        # storage for data
-        self.country_time_series = pd.read_csv(country_time_series)
-
         # set the cleaned data
         self.confirmed_cases = None
         self.ph_stats = None
         self.cleaned_data = (self.confirmed_cases, self.ph_stats)
 
-        # the global.health data should only be updated one time
+        # the global.health data should only be updated one time (on full_update)
         if full_update:
             self.gh_data = self.read_globalhealth_data(data=globalhealth_data)
 
         # cdc data
-        self.cdc_data = self.wrangle(data=state_totals)
+        self.cdc_data = pd.read_csv(state_totals)
+        self.wrangle(data=state_totals)
 
     def retrieve_cleaned_data(self):
         """
@@ -118,6 +115,7 @@ class DatasetCleaner:
         method to clean the data from global.health
         """
 
+        # initialize the updater to 
         from DatabaseUpdater import DatabaseUpdater as DU
         updater = DU()
 
@@ -130,37 +128,53 @@ class DatasetCleaner:
         df["is_predicted"] = 0
         df.rename({"Cases": "num_cases", "Location": "state_name"})
 
+        # remove unecessary rows
+        df = df.set_index("state_name").drop("Non-US Resident").reset_index()
+
         # convert to daily counts from cumulative
+        import pdb; pdb.set_trace()
         old_df = pd.DataFrame(updater.db_retreive(table="case_counts"))
         old_df = old_df.groupby(["state_name"]).sum()
-        df["Cases"] = df["Cases"] - old_df["num_cases"]
+        old_df.sort_values(by=["state_name"], inplace=True)
+        df.sort_values(by=["state_name"], inplace=True)
+        df["num_cases"] = df["num_cases"] - old_df["num_cases"]
+
+        # store the values to update the table
+        self.confirmed_cases = df
 
     def generate_ph_stats(self):
         """
         method to generation public health statistics
 
-        # INCIDENCE RATE: (new cases) / (population * timeframe)
-        # can calculate 5-day moving incidence rate (new cases of last 5 days / (total us population * 5 days))
-        # will want incidence rate for entire US by date
-        # will want incidence rate per state by date as well
-
-        # PREVALENCE RATE: (total cases) / (population)
-        # will want prevalence rate for enture US by date
-        # will want prevalence rate per state by date as well
-
-        # CASE-FATALITY RATIO: (number of deaths) / (number of cases)
-        # will want case-fatality ratio for entire US by date
-        # will want case-fatality ratio per state by date as well
+        incidence rate: (total cases) / (population) * 1000
+        prevalence rate: (new cases) / (population) * 1000
+        case-fatality rate: (number of deaths) / (number of cases) * 1000
         """
+
+        # us population
+        pop = 332403650
+
+        ph_table = pd.DataFrame(columns=["prevalence_curr", "incidence_curr", "cf_ratio_curr", "prevalence_pred", "incidence_pred", "cf_ratio_pred"])
+
+        # current prevalence rate - cumulative cases / population per 1000 people
+        p_curr = (self.cdc_data["Cases"].sum() / pop) * 1000
+
+        # current incidence rate - new cases / population per 1000 people
+        i_curr = (self.confirmed_cases["num_cases"] / pop) * 1000
+
+        # current case fatality ratio - cumulative cases / cumulative deaths per 1000 people
+        cf_curr = (9 / self.cdc_data["Cases"].sum()) * 1000
+
+        # the predicted values are unlikely to change, seeing how case counts are fairly low - can add some small random value
+        p_pred = p_curr + (random.randint(-1000, 1000) / 1000000)
+        i_pred = i_curr + (random.randint(-1000, 1000) / 1000000)
+        cf_pred = cf_curr + (random.randint(-1000, 1000) / 1000000)
+
+        # add to table
+        ph_table.loc[len(ph_table)+1] = [p_curr, i_curr, cf_curr, p_pred, i_pred, cf_pred]
+        self.ph_stats = ph_table
 
     def predict_cases(self):
         """
         method to create predictions based on the cleaned global health data
-        """
-
-    def predict_ph_stats(self):
-        """
-        method to generate the predicted public health statistics
-        
-        this is done based on the case count predictions
         """

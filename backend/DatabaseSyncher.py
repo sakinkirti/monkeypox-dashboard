@@ -15,6 +15,17 @@ import time
 from DatabaseUpdater import DatabaseUpdater as du
 
 class DatabaseSyncher:
+    """
+    author: Saketh Dendi, Sakin Kirti, and Felix Huang
+    date: 10/25/2022
+    
+    class to sync the database on a cron timer
+    
+    object should call several methods on the DatabaseUpdater on command
+    1. initialize the Updater
+    2. updater.get_data()
+    3. updater.fill_table() - takes parameters
+    """
 
     def __init__(self):
         pass
