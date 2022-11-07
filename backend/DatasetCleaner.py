@@ -22,7 +22,7 @@ class DatasetCleaner:
         # set the cleaned data
         self.confirmed_cases = None
         self.ph_stats = None
-        self.cleaned_data = (self.confirmed_cases, self.ph_stats)
+        self.cleaned_data = [self.confirmed_cases, self.ph_stats]
 
         # the global.health data should only be updated one time (on full_update)
         if full_update:
@@ -39,6 +39,13 @@ class DatasetCleaner:
 
         # return the cleaned data
         return self.cleaned_data
+
+    def set_cleaned_data(self):
+        """
+        method to set the cleaned data to the right variables
+        """
+
+        self.cleaned_data = [self.confirmed_cases, self.ph_stats]
 
     def read_globalhealth_data(self, data: str):
         """
@@ -100,6 +107,7 @@ class DatasetCleaner:
 
         # add dummy data for District of Columbia
         table.loc[len(table)+1] = [datetime.date.today(), "District of Columbia", 0, 0]
+        table.loc[len(table)+1] = [datetime.date.today(), "Puerto Rico", 0, 0]
 
         # convert date to datetime format
         table["confirmed_date"].astype(str)
@@ -126,18 +134,19 @@ class DatasetCleaner:
         df = df.drop(columns=["Case_Range", "AsOf"])
         df["confirmed_date"] = datetime.date.today()
         df["is_predicted"] = 0
-        df.rename({"Cases": "num_cases", "Location": "state_name"})
+        df.rename(columns={"Cases": "num_cases", "Location": "state_name"}, inplace=True)
 
         # remove unecessary rows
-        df = df.set_index("state_name").drop("Non-US Resident").reset_index()
+        df = df.set_index("state_name").drop("Non-US Resident")
+        df = df.drop("Total").reset_index()
 
         # convert to daily counts from cumulative
-        import pdb; pdb.set_trace()
         old_df = pd.DataFrame(updater.db_retreive(table="case_counts"))
-        old_df = old_df.groupby(["state_name"]).sum()
-        old_df.sort_values(by=["state_name"], inplace=True)
+        old_df.rename(columns={0: "confirmed_date", 1: "state_name", 2: "num_cases", 3: "is_predicted"}, inplace=True)
+        temp = old_df.groupby(["state_name"]).sum(numeric_only=True).reset_index()
+        temp.sort_values(by=["state_name"], inplace=True)
         df.sort_values(by=["state_name"], inplace=True)
-        df["num_cases"] = df["num_cases"] - old_df["num_cases"]
+        df["num_cases"] = df["num_cases"] - temp["num_cases"]
 
         # store the values to update the table
         self.confirmed_cases = df
@@ -160,7 +169,7 @@ class DatasetCleaner:
         p_curr = (self.cdc_data["Cases"].sum() / pop) * 1000
 
         # current incidence rate - new cases / population per 1000 people
-        i_curr = (self.confirmed_cases["num_cases"] / pop) * 1000
+        i_curr = (self.confirmed_cases["num_cases"].sum() / pop) * 1000
 
         # current case fatality ratio - cumulative cases / cumulative deaths per 1000 people
         cf_curr = (9 / self.cdc_data["Cases"].sum()) * 1000
@@ -171,7 +180,7 @@ class DatasetCleaner:
         cf_pred = cf_curr + (random.randint(-1000, 1000) / 1000000)
 
         # add to table
-        ph_table.loc[len(ph_table)+1] = [p_curr, i_curr, cf_curr, p_pred, i_pred, cf_pred]
+        ph_table.loc[0] = [p_curr, i_curr, cf_curr, p_pred, i_pred, cf_pred]
         self.ph_stats = ph_table
 
     def predict_cases(self):

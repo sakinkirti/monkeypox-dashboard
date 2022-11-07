@@ -17,7 +17,5 @@ class test_DatasetCleaner(TestCase):
 
         # tests full update functionality - without any other commands, this should update the db
         cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
-                     seven_day_avg = "https://www.cdc.gov/poxvirus/monkeypox/modules/data-viz/mpx-cases-trend-7day.json",
-                     country_time_series="https://raw.githubusercontent.com/gridviz/monkeypox/main/data/processed/monkeypox_cases_derived_timeseries_latest.csv",
                      globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
                      full_update=True)

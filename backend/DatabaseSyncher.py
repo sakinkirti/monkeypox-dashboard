@@ -7,6 +7,20 @@ The DatabaseSyncher class runs a constant cron timer. At the same time each day 
 if calls the DatabaseUpdater Class to update our local database based on Global.Health's changes.
 
 It also contains a backup method in case the cron timer fails to update the database when needed.
+
+# manual tests
+updater = DU()
+conn = updater.db_connect()
+cursor = conn.cursor()
+
+# get and store data
+updater.get_data()
+
+# update the tables
+for table,df in zip(["case_counts", "ph_stats"], updater.new_data):
+    updater.fill_table(df, table, conn, cursor)
+
+updater.db_disconnect(conn)
 """
 
 import schedule

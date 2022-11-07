@@ -29,7 +29,7 @@ class test_DatabaseUpdater(TestCase):
         self.assertTrue(False if conn is Exception else True)
         self.assertTrue(False if updater.db_disconnect(conn) is Exception else True)
 
-    def test_get_globalhealth_data(self):
+    def test_get_data(self):
         """
         method to test the cleaning and generation of 
         the public health data
@@ -37,7 +37,7 @@ class test_DatabaseUpdater(TestCase):
 
         # initialize the object
         updater = DU()
-        updater.get_globalhealth_data()
+        updater.get_data()
 
         # make sure there is something in the storage
         self.assertTrue(updater.new_data is not None)
@@ -58,6 +58,3 @@ class test_DatabaseUpdater(TestCase):
         updater = DU()
         updater.db_update(dummy_df, "case_counts")
 
-# manual tests
-updater = DU()
-updater.get_globalhealth_data()

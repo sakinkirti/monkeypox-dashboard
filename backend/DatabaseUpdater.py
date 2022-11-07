@@ -28,8 +28,8 @@ class DatabaseUpdater:
         self.token = "dashboard123"
 
         # store the new data to update
-        self.new_data = None
         self.tables = ["confirmed_counts", "ph_stats"]
+        self.new_data = None
 
     def db_connect(self):
         """
@@ -71,6 +71,7 @@ class DatabaseUpdater:
         #cleaner.predict_ph_stats()
 
         # store the data
+        cleaner.set_cleaned_data()
         self.new_data = cleaner.retrieve_cleaned_data()
 
     def db_retreive(self, table):
@@ -127,6 +128,7 @@ class DatabaseUpdater:
         table: str - the name of the table to populate
         cursor: psycopg2.connection.cursor - the cursor to execute the commands with
         """
+        import pdb; pdb.set_trace()
 
         # data to insertable format
         tuples = [tuple(x) for x in df.to_numpy()]
