@@ -59,10 +59,13 @@ class DatabaseUpdater:
         """
 
         # generate the cleaner object
-        cleaner = DC(data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest.csv")
+        cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
+                     seven_day_avg = "https://www.cdc.gov/poxvirus/monkeypox/modules/data-viz/mpx-cases-trend-7day.json",
+                     country_time_series="https://raw.githubusercontent.com/gridviz/monkeypox/main/data/processed/monkeypox_cases_derived_timeseries_latest.csv",
+                     globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
+                     full_update=False)
 
         # clean the data and calcualte ph stats
-        cleaner.wrangle()
         # cleaner.generate_ph_stats()
 
         # generate predictions
@@ -70,7 +73,26 @@ class DatabaseUpdater:
         #cleaner.predict_ph_stats()
 
         # store the data
-        self.new_data = cleaner.retrieve_cleaned_data()
+        # self.new_data = cleaner.retrieve_cleaned_data()
+
+    def db_retreive(self, table):
+        """
+        method to retreive the data present in the database
+        """
+
+        # connect to the db and generate cursor
+        conn = self.db_connect()
+        cursor = conn.cursor()
+
+        # execute select statement to get all the data from the specified table
+        cursor.execute(f"SELECT * from {table}")
+        result = cursor.fetchall()
+
+        # close the connection
+        conn.close()
+
+        # return the result
+        return result
 
     def db_update(self, data=None, table=None):
         """
