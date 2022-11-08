@@ -1,10 +1,10 @@
 # cache and testing cache files shouldn't be stored
-/backend/__pycache__
-/backend/.pytest_cache
+__pycache__/
+.pytest_cache
 .vscode
 
 # backend components
-/backend/__pycache__
+__pycache__/
 
 # other cached
 .DS_store
