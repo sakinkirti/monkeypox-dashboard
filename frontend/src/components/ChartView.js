@@ -1,11 +1,21 @@
 import { React } from 'react'
 import { LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Line, Legend } from 'recharts'
-import { Container, Text, Divider, Icon, HStack } from '@chakra-ui/react'
+import { Container, Text, Divider, Icon, HStack, Tabs, TabList, Tab } from '@chakra-ui/react'
 
 const sampleData = [
+    { day: "Feb 19, 2022", cases: 0, PR: "0.4%", IR: "1.2%", CFR: "3.0%" },
     { day: "Feb 20, 2022", cases: 102, PR: "0.4%", IR: "1.2%", CFR: "3.0%" },
     { day: "Jun 21, 2022", cases: 121, PR: "0.1%", IR: "1.9%", CFR: "3.3%" },
-    { day: "Oct 22, 2022", cases: 132, PR: "0.9%", IR: "2.1%", CFR: "-3.9%" }
+    { day: "Oct 22, 2022", cases: 132, PR: "0.9%", IR: "2.1%", CFR: "3.9%" },
+    { day: "Oct 23, 2022", cases: 132, PR: "0.8%", IR: "2.1%", CFR: "3.9%" },
+    { day: "Oct 24, 2022", cases: 134, PR: "0.7%", IR: "2.1%", CFR: "3.9%" },
+    { day: "Oct 25, 2022", cases: 135, PR: "0.6%", IR: "2.1%", CFR: "3.9%" },
+    { day: "Oct 26, 2022", cases: 135, PR: "0.5%", IR: "2.1%", CFR: "3.9%" },
+    { day: "Oct 27, 2022", cases: 137, PR: "0.4%", IR: "2.1%", CFR: "3.9%" },
+    { day: "Oct 28, 2022", cases: 138, PR: "0.3%", IR: "2.1%", CFR: "3.9%" },
+    { day: "Oct 29, 2022", cases: 140, PR: "0.2%", IR: "2.1%", CFR: "3.9%" },
+    { day: "Oct 30, 2022", cases: 140, PR: "0.1%", IR: "2.1%", CFR: "3.9%" },
+    { day: "Oct 31, 2022", cases: 140, PR: "0.2%", IR: "2.1%", CFR: "3.9%" },
 ]
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -28,7 +38,13 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const ChartView = () => {
     return (
-        <Container minWidth='100%' minHeight='100vh' pt={40} pl={16} display={['none', 'none', 'flex', 'flex']} centerContent>
+        <Container minWidth='100%' minHeight='100vh' pt={28} pl={8} display={['none', 'none', 'flex', 'flex']} centerContent>
+            <Tabs isFitted variant='enclosed'>
+                <TabList mb='1em'>
+                    <Tab _selected={{ color: 'white', bg: 'blue.500' }}>Cumulative</Tab>
+                    <Tab _selected={{ color: 'white', bg: 'blue.500' }} whiteSpace='nowrap'>7-day Moving Average</Tab>
+                </TabList>
+            </Tabs>
             <ResponsiveContainer position='absolute' minHeight="70vh" width="60%" zIndex={25}>
                 <LineChart
                     width={500}
@@ -39,7 +55,7 @@ const ChartView = () => {
                     <XAxis dataKey="day" />
                     <YAxis dataKey="cases" />
                     <Tooltip wrapperStyle={{ outline: 'none', borderWidth: 1, borderColor: 'black', borderRadius: 4 }} content={<CustomTooltip />} />
-                    <Legend verticalAlign="bottom" height={36} margin={{ top: 30, right: 30, left: 30, bottom: 30 }} />
+                    <Legend verticalAlign="top" height={36} margin={{ top: 30, right: 30, left: 30, bottom: 30 }} />
                     <Line name="Number of Confirmed Cases" type="monotone" dataKey="cases" stroke="#0E6495" />
                 </LineChart>
             </ResponsiveContainer>
