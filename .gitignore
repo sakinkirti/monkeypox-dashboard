@@ -1,10 +1,31 @@
 # cache and testing cache files shouldn't be stored
-/__pycache__
-/.pytest_cache
-/.vscode
+/backend/__pycache__
+/backend/.pytest_cache
+.vscode
 
 # backend components
 /backend/__pycache__
 
 # other cached
-/.DS_store
+.DS_store
+
+# dependencies
+/frontend/node_modules
+.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
