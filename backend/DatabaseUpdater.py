@@ -128,7 +128,6 @@ class DatabaseUpdater:
         table: str - the name of the table to populate
         cursor: psycopg2.connection.cursor - the cursor to execute the commands with
         """
-        import pdb; pdb.set_trace()
 
         # data to insertable format
         tuples = [tuple(x) for x in df.to_numpy()]
