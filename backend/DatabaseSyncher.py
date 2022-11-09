@@ -29,8 +29,8 @@ class DatabaseSyncher:
         method to update on sync timer
         """
 
-        schedule.every().day.at("8:30").do(self.job)
-        schedule.every().day.at("8:31").do(self.sync)
+        #schedule.every().day.at("12:30").do(self.job)
+        schedule.every().day.at("12:43").do(self.sync)
 
         while 1:
             schedule.run_pending()
