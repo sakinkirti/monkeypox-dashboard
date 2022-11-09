@@ -16,14 +16,18 @@ const CasesTable = (positions) => {
 
     useEffect(() => {
         casesService.getStateCases().then(data => {
-            const reformatted = data.features.map(state => {
-                return ({ name: state.properties.name, density: state.properties.density })
+            console.log(data)
+            const reformatted = data.map(state => {
+                return ({ name: state.name, cumulative_cases: state.cumulative_cases })
             }).sort((a, b) => {
-                return b.density - a.density
+                return b.cumulative_cases - a.cumulative_cases
             })
+            console.log(reformatted)
             setStatesData(reformatted)
         })
     }, [])
+
+    console.log(statesData)
 
     useEffect(() => {
         casesService.getStateFlags().then(data => {
@@ -59,7 +63,7 @@ const CasesTable = (positions) => {
                                         />
                                     </Td>
                                     <Td p={4} whiteSpace='nowrap'>{state.name}</Td>
-                                    <Td p={4}>{state.density}</Td>
+                                    <Td p={4}>{state.cumulative_cases}</Td>
                                 </Tr>
                             )
                         }))}
