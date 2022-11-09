@@ -13,10 +13,10 @@ def db_retrieve_state_cases():
     conn = du.db_connect()
     cursor = conn.cursor()
     result = []
-    states=["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", 
-                "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", 
-                "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", 
-                "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
+    states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
+              "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
+              "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+              "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
     for state in states:
         cursor.execute(
             f"""
@@ -37,6 +37,22 @@ def db_retrieve_state_cases():
             """
         )
         result.append(cursor.fetchall()[0][0])
+    conn.close()
+    return result
+
+
+@app.route('/api/cases/total')
+def db_retrieve_US_total_cases():
+    """
+    method to retrieve cumulative US cases in database
+    """
+
+    du = DU()
+    conn = du.db_connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT sum(num_cases) as total_cases FROM case_counts")
+    result = []
+    result.append(cursor.fetchall()[0][0])
     conn.close()
     return result
 

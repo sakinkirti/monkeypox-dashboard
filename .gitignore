@@ -6,6 +6,7 @@ __pycache__/
 # backend components
 /backend/env
 /backend/mpvenv
+/backend/.flaskenv
 
 # other cached
 .DS_store
