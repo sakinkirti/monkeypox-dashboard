@@ -1,27 +1,51 @@
 import axios from 'axios'
 
 // change URL to whatever backend API we're serving
-// const baseUrl = 'https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json'
 const baseUrl = '/api'
-const flagsUrl ='https://raw.githubusercontent.com/CivilServiceUSA/us-states/master/data/states.json'
+const geoJSONUrl = 'https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json'
+const flagsUrl = 'https://raw.githubusercontent.com/CivilServiceUSA/us-states/master/data/states.json'
 
-const getStateCases = async () => {
+const getUSTotalCases = async () => {
+    const response = await axios.get(`${baseUrl}/cases/total`)
+    return response.data
+}
+
+const getAllStateCases = async () => {
     const response = await axios.get(`${baseUrl}/cases`)
+    return response.data
+}
+
+const getStateCases = async (state) => {
+    const response = await axios.get(`${baseUrl}/cases/${state}`)
     console.log(response.data)
     return response.data
 }
 
 const getStateFlags = async () => {
     const response = await axios.get(flagsUrl)
-    const mod = response.data
-    .concat({state: "District of Columbia", state_flag_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Flag_of_the_District_of_Columbia.svg/510px-Flag_of_the_District_of_Columbia.svg.png"})
-    .concat({state: "Puerto Rico", state_flag_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Flag_of_Puerto_Rico.svg/255px-Flag_of_Puerto_Rico.svg.png"})
-    return mod
+    return response.data
+}
+
+const getMapGeoJSON = async () => {
+    const response = await axios.get(geoJSONUrl)
+    const stateCases = await getAllStateCases()
+    const modified = response.data.features.filter(state => 
+        state.properties.name !== 'Puerto Rico' 
+        && state.properties.name !== 'District of Columbia'
+    )
+    modified.forEach((state, index) => {
+        state.properties.density = stateCases[index].cumulative_cases
+    })
+    var geoJSONObject = {"type": "FeatureCollection", "features": modified}
+    return geoJSONObject
 }
 
 const caseService = {
+    getUSTotalCases,
+    getAllStateCases,
     getStateCases,
-    getStateFlags
+    getStateFlags,
+    getMapGeoJSON
 }
 
 export default caseService

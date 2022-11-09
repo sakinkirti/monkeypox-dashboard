@@ -15,19 +15,15 @@ const CasesTable = (positions) => {
     const [statesData, setStatesData] = useState([])
 
     useEffect(() => {
-        casesService.getStateCases().then(data => {
-            console.log(data)
+        casesService.getAllStateCases().then(data => {
             const reformatted = data.map(state => {
                 return ({ name: state.name, cumulative_cases: state.cumulative_cases })
             }).sort((a, b) => {
                 return b.cumulative_cases - a.cumulative_cases
             })
-            console.log(reformatted)
             setStatesData(reformatted)
         })
     }, [])
-
-    console.log(statesData)
 
     useEffect(() => {
         casesService.getStateFlags().then(data => {
@@ -76,9 +72,11 @@ const CasesTable = (positions) => {
 
 const USTable = (positions) => {
     const [cases, setCases] = useState(null)
-    // replace with pull from db
+    
     useEffect(() => {
-        setCases(10000)
+        casesService.getUSTotalCases().then(data => {
+            setCases(data)
+        })
     }, [])
 
     return (
