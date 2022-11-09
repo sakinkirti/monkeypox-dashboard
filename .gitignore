@@ -7,6 +7,7 @@ __pycache__/
 /backend/env
 /backend/mpvenv
 /backend/.flaskenv
+/backend/client_secret.json
 
 # other cached
 .DS_store
