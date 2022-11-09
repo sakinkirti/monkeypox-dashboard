@@ -15,11 +15,11 @@ const CasesTable = (positions) => {
     const [statesData, setStatesData] = useState([])
 
     useEffect(() => {
-        casesService.getStateCases().then(data => {
-            const reformatted = data.features.map(state => {
-                return ({ name: state.properties.name, density: state.properties.density })
+        casesService.getAllStateCases().then(data => {
+            const reformatted = data.map(state => {
+                return ({ name: state.name, cumulative_cases: state.cumulative_cases })
             }).sort((a, b) => {
-                return b.density - a.density
+                return b.cumulative_cases - a.cumulative_cases
             })
             setStatesData(reformatted)
         })
@@ -59,7 +59,7 @@ const CasesTable = (positions) => {
                                         />
                                     </Td>
                                     <Td p={4} whiteSpace='nowrap'>{state.name}</Td>
-                                    <Td p={4}>{state.density}</Td>
+                                    <Td p={4}>{state.cumulative_cases}</Td>
                                 </Tr>
                             )
                         }))}
@@ -72,9 +72,11 @@ const CasesTable = (positions) => {
 
 const USTable = (positions) => {
     const [cases, setCases] = useState(null)
-    // replace with pull from db
+    
     useEffect(() => {
-        setCases(10000)
+        casesService.getUSTotalCases().then(data => {
+            setCases(data)
+        })
     }, [])
 
     return (

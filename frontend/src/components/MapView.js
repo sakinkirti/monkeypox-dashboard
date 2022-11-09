@@ -11,12 +11,12 @@ import {
 } from '@chakra-ui/react'
 
 const MapView = () => {
-    const [statesData, setStatesData] = useState([])
-
+    const [geoJSONData, setGeoJSONData] = useState([])
+    
     useEffect(() => {
-        casesService.getStateCases().then(data =>
-            setStatesData(data)
-        )
+        casesService.getMapGeoJSON().then(data => {
+            setGeoJSONData(data)
+        })
     }, [])
 
     return (
@@ -36,7 +36,7 @@ const MapView = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <GeoJSON key={statesData} data={statesData} style={style} />
+            <GeoJSON key={geoJSONData} data={geoJSONData} style={style} />
             <ZoomControl position='bottomright' />
         </MapContainer>
     )

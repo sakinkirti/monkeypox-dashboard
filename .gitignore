@@ -4,7 +4,7 @@ __pycache__/
 .vscode
 
 # backend components
-__pycache__/
+/backend/env
 
 # other cached
 .DS_store
