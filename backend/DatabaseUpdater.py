@@ -155,7 +155,10 @@ class DatabaseUpdater:
 
         updater = DatabaseUpdater()
         old_df = pd.Dataframe(updater.db_retrieve(table="case_counts"))
-        old_df.rename(columns={0:"confirmed__date", 1: "state_name", 2:"num_cases", 3: "is_predicted"}, inplace = True)
+
+        old_df.rename(columns={0:"confirmed_date", 1: "state_name", 2:"num_cases", 3: "is_predicted"}, inplace = True)
+        old_df = pd.DataFrame.sort_values(columns=["confirmed_date", "state_name"], inplace = True)
+
 
         result = old_df.cumsum()
         old_df["num_cases"] = result.iloc[:,1]
