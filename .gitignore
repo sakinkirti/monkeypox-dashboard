@@ -9,14 +9,17 @@ __pycache__/
 # backend components
 /backend/env
 /backend/mpvenv
+/backend/.flaskenv
+/backend/client_secret.json
 
 # other cached
 .DS_store
 
-# dependencies
+# frontend
 /frontend/node_modules
 .pnp
 .pnp.js
+coverage/
 
 # testing
 /coverage

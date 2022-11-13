@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2 import extras
-
+import pandas as pd
+import numpy as np
 from DatasetCleaner import DatasetCleaner as DC
 
 class DatabaseUpdater:
@@ -74,9 +75,9 @@ class DatabaseUpdater:
         cleaner.set_cleaned_data()
         self.new_data = cleaner.retrieve_cleaned_data()
 
-    def db_retreive(self, table):
+    def db_retrieve(self, table):
         """
-        method to retreive the data present in the database
+        method to retrieve the data present in the database
         """
 
         # connect to the db and generate cursor
@@ -143,6 +144,48 @@ class DatabaseUpdater:
         except (Exception, psycopg2.DatabaseError) as error:
             print("Error: %s" % error)
             connection.rollback()
+
+
+
+
+    def cumulative_Stats(self):
+        """
+        method to find the cumulative case count and rename dataframe values
+        """
+
+        updater = DatabaseUpdater()
+        old_df = pd.Dataframe(updater.db_retrieve(table="case_counts"))
+
+        old_df.rename(columns={0:"confirmed_date", 1: "state_name", 2:"num_cases", 3: "is_predicted"}, inplace = True)
+        old_df = pd.DataFrame.sort_values(columns=["confirmed_date", "state_name"], inplace = True)
+
+
+        result = old_df.cumsum()
+        old_df["num_cases"] = result.iloc[:,1]
+
+        return old_df
+
+
+    def prediction_engine(self):
+
+        updater = DatabaseUpdater()
+        predDf = updater.cumulative_Stats
+
+        increases = predDf['num_cases'].to_numpy()
+        linear = np.arrange(increases + 1)
+
+        x = np.polyfit(linear, increases,)
+        p = np.poly1d(x)
+        result = []
+
+        for value in predDf["is_predicted"]:
+            if value == None:
+                result.append(p(value))
+
+        predDf["is_predicted"] = result
+        return predDf
+
+
 
     def updateDataframe(self, df):
         self.set_index('case_counts', inplace = True)

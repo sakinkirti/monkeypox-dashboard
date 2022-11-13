@@ -47,7 +47,7 @@ const CasesTable = (positions) => {
             <Heading fontSize={20} pb={5} textAlign='center'>States By Confirmed Cases</Heading>
             <Box overflowY="auto" maxHeight="300px" maxWidth='300px'>
                 <Table variant="simple">
-                    <Tbody maxWidth='full' fontSize={14}>
+                    <Tbody maxWidth='full' fontSize={16}>
                         {statesData.map((state => {
                             const flagUrl = stateFlags?.find(stateFlag => stateFlag.name === state.name)?.flag
                             return (

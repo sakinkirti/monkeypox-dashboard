@@ -1,19 +1,28 @@
-import React from 'react'
+import { React, useState, useEffect } from 'react'
 import {
     Stat,
     StatLabel,
     StatNumber,
-    StatArrow,
+    // StatArrow,
     StatGroup,
     VStack,
     Flex,
     Heading
 } from '@chakra-ui/react'
+// import { MinusIcon } from '@chakra-ui/icons'
+import predictionService from '../services/predictionFetch'
 
 const PredictiveStatTable = (props) => {
     // need to fetch increase or decrease from backend
     // need to fetch amount of inrease or decrease
     // need to know if fetching for nationwide or statewide
+    const [stats, setStats] = useState([])
+
+    useEffect(() => {
+        predictionService.getStatsChanges().then(data => {
+            setStats(data[data.length - 1])
+        })
+    }, [])
 
     return (
         <VStack
@@ -34,8 +43,9 @@ const PredictiveStatTable = (props) => {
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Prevalence Rate</StatLabel>
                         <Flex justifyContent='center'>
                             <StatNumber>
-                                <StatArrow type={'increase'} />
-                                1.2%
+                                {/* {stats[0] == 0.00 ? <MinusIcon w={6} h={6} color='gray.400' p={1} /> :
+                                    <StatArrow type={stats[0] > 0 ? 'increase' : 'decrease'} />} */}
+                                {stats[0]}
                             </StatNumber>
                         </Flex>
                     </Stat>
@@ -43,8 +53,9 @@ const PredictiveStatTable = (props) => {
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Incidence Rate</StatLabel>
                         <Flex justifyContent='center'>
                             <StatNumber>
-                                <StatArrow type={'decrease'} />
-                                0.5%
+                                {/* {stats[1] == 0.00 ? <MinusIcon w={6} h={6} color='gray.400' p={1} /> :
+                                    <StatArrow type={stats[1] > 0 ? 'increase' : 'decrease'} />} */}
+                                {stats[1]}
                             </StatNumber>
                         </Flex>
                     </Stat>
@@ -52,8 +63,9 @@ const PredictiveStatTable = (props) => {
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Case-fatality Ratio</StatLabel>
                         <Flex justifyContent='center'>
                             <StatNumber>
-                                <StatArrow type={'increase'} />
-                                0.9%
+                                {/* {stats[2] == 0.00 ? <MinusIcon w={6} h={6} color='gray.400' p={1} /> :
+                                    <StatArrow type={stats[1] > 0 ? 'increase' : 'decrease'} />} */}
+                                {stats[2]}
                             </StatNumber>
                         </Flex>
                     </Stat>

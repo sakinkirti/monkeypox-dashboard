@@ -29,7 +29,7 @@ const Home = () => {
         <PredictiveStatTable
           bottom={'3%'}
           zIndex={10}
-          heading={'National Predictive Statistics Changes For Next Week'}
+          heading={'National Public Health Statistics For Today'}
         />
       </Flex>
     </Container>

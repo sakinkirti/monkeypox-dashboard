@@ -2,6 +2,8 @@ import schedule
 import time
 
 from DatabaseUpdater import DatabaseUpdater as DU
+from datetime import datetime
+
 
 class DatabaseSyncher:
     """
@@ -22,15 +24,23 @@ class DatabaseSyncher:
         notify
         """
 
-        print("I'm working...")
+        return "I'm working..."
+    
+    def currentTime(self):
+        datetime.now().strftime('%H:%M')
 
     def synchTimer(self):
         """
         method to update on sync timer
         """
+<<<<<<< HEAD
 
         #schedule.every().day.at("12:30").do(self.job)
         schedule.every().day.at("16:18").do(self.sync)
+=======
+        schedule.every().day.at(syncher.currentTime).do(self.job)
+        schedule.every().day.at("10:30").do(self.sync)
+>>>>>>> 80e654b62da699f017166dbfa657def37c1ff6a5
 
         while 1:
             schedule.run_pending()
@@ -57,4 +67,4 @@ class DatabaseSyncher:
         print("completed filling the table")
 
 syncher = DatabaseSyncher()
-syncher.synchTimer()
+#syncher.synchTimer()
