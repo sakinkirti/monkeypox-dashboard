@@ -1,14 +1,8 @@
 from unittest import TestCase
 from DatabaseSyncher import DatabaseSyncher as DS
-
-<<<<<<< HEAD
-class test_DatabaseSyncher(TestCase):
-=======
-from DatabaseSyncher import DatabaseSyncher as DS
 from DatabaseUpdater import DatabaseUpdater as DU
 
 class test_DatabaseSyncher:   
->>>>>>> 80e654b62da699f017166dbfa657def37c1ff6a5
     """
     author: Saketh Dendi
     date: 10/20/2022
