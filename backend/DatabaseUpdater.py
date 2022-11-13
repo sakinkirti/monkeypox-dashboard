@@ -5,7 +5,7 @@ from DatasetCleaner import DatasetCleaner as DC
 
 class DatabaseUpdater:
     """
-    authors: Saketh Dendi, Felix Huang, and Sakin Kirti
+    authors: Sakin Kirti, Saketh Dendi, and Felix Huang
     since: 10/13/2022  
 
     The DatabaseUpdater gets called from the DatabaseSyncher. It updates the local database, populating
@@ -61,7 +61,7 @@ class DatabaseUpdater:
         # generate the cleaner object
         cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
                      globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
-                     full_update=False)
+                     full_update=True)
 
         # clean the data and calcualte ph stats
         cleaner.generate_ph_stats()

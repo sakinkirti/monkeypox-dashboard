@@ -30,7 +30,7 @@ class DatabaseSyncher:
         """
 
         #schedule.every().day.at("12:30").do(self.job)
-        schedule.every().day.at("12:43").do(self.sync)
+        schedule.every().day.at("16:18").do(self.sync)
 
         while 1:
             schedule.run_pending()
@@ -54,6 +54,7 @@ class DatabaseSyncher:
             updater.fill_table(df, table, conn, cursor)
 
         updater.db_disconnect(conn)
+        print("completed filling the table")
 
 syncher = DatabaseSyncher()
 syncher.synchTimer()

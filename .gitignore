@@ -3,6 +3,9 @@ __pycache__/
 .pytest_cache
 .vscode
 
+# github autobug tracking
+.github
+
 # backend components
 /backend/env
 /backend/mpvenv
