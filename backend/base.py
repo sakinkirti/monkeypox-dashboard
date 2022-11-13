@@ -29,7 +29,7 @@ def db_retrieve_state_cases():
                                 'num_cases', num_cases
                             )
                         ),
-                        'cumulative_cases', sum(num_cases)  
+                        'cumulative_cases', sum(num_cases)
                     )
                 FROM case_counts
                 WHERE state_name='{state}'
@@ -53,6 +53,20 @@ def db_retrieve_US_total_cases():
     cursor.execute("SELECT sum(num_cases) as total_cases FROM case_counts")
     result = []
     result.append(cursor.fetchall()[0][0])
+    conn.close()
+    return result
+
+
+@app.route('/api/phs')
+def db_retrieve_ph_stats():
+    """
+    method to retrieve US current and predictive public health stats from database
+    """
+    du = DU()
+    conn = du.db_connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM ph_stats")
+    result = cursor.fetchall()
     conn.close()
     return result
 
