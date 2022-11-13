@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from backend.DatabaseSyncher import DatabaseSyncher as DS
+from DatabaseSyncher import DatabaseSyncher as DS
+from DatabaseUpdater import DatabaseUpdater as DU
 
 class test_DatabaseSyncher:   
     """
@@ -10,12 +11,21 @@ class test_DatabaseSyncher:
     class to test the methods and functionality in DatabaseSyncher
     """ 
 
-    def test_synchTimer(self):
+    def test_currentTimer(self):
         """
         test the method to update the database
         """
 
         syncher = DS()
-        syncher.synchTimer()
+        syncher.job()
 
-        self.assertTrue(syncher.synchTime is "10:30")
+        self.assertTrue(syncher.job == "I'm working...")
+
+    def test_sync(self):
+        """
+        test the method that syncs the database
+        """
+        syncher = DS()
+        updater = DU()
+        syncher.sync
+        self.assertTrue(updater.get_data == "I'm working...")
