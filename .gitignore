@@ -12,10 +12,11 @@ __pycache__/
 # other cached
 .DS_store
 
-# dependencies
+# frontend
 /frontend/node_modules
 .pnp
 .pnp.js
+coverage/
 
 # testing
 /coverage

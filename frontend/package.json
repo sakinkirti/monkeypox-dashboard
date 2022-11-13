@@ -25,7 +25,8 @@
     "start-backend": "cd ../backend && env/bin/flask run --no-debugger",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "coverage": "npm test -- --coverage"
   },
   "eslintConfig": {
     "extends": [
