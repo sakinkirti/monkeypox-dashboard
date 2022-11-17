@@ -55,9 +55,9 @@ const style = (props) => {
 
 const getColor = (density) => {
     return (
-        density > 500 ? '#0E6495' :
-            density > 100 ? '#399BC6' :
-                density > 50 ? '#5BD4C0' :
+        density > 1000 ? '#0E6495' :
+            density > 500 ? '#399BC6' :
+                density > 100 ? '#5BD4C0' :
                     density > 10 ? '#ACF5E9' :
                         density > 0 ? '#EBFCF9' :
                             '#FFFFFF'
@@ -91,25 +91,25 @@ const Legend = (positions) => {
                 <ListItem>
                     <HStack>
                         <CircleIcon boxSize={4} color='#ACF5E9' />
-                        <Text>11-50</Text>
+                        <Text>11-100</Text>
                     </HStack>
                 </ListItem>
                 <ListItem>
                     <HStack>
                         <CircleIcon boxSize={4} color='#5BD4C0' />
-                        <Text>51-100</Text>
-                    </HStack>
-                </ListItem>
-                <ListItem>
-                    <HStack>
-                        <CircleIcon boxSize={4} color='#399BC6' />
                         <Text>101-500</Text>
                     </HStack>
                 </ListItem>
                 <ListItem>
                     <HStack>
+                        <CircleIcon boxSize={4} color='#399BC6' />
+                        <Text>501-1000</Text>
+                    </HStack>
+                </ListItem>
+                <ListItem>
+                    <HStack>
                         <CircleIcon boxSize={4} color='#0E6495' />
-                        <Text>{'>'}500</Text>
+                        <Text>{'>'}1000</Text>
                     </HStack>
                 </ListItem>
             </List>

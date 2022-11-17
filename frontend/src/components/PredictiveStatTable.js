@@ -3,13 +3,13 @@ import {
     Stat,
     StatLabel,
     StatNumber,
-    // StatArrow,
+    StatArrow,
     StatGroup,
     VStack,
     Flex,
     Heading
 } from '@chakra-ui/react'
-// import { MinusIcon } from '@chakra-ui/icons'
+import { MinusIcon } from '@chakra-ui/icons'
 import predictionService from '../services/predictionFetch'
 
 const PredictiveStatTable = (props) => {
@@ -32,6 +32,8 @@ const PredictiveStatTable = (props) => {
             right={props.right}
             zIndex={props.zIndex}
             p={4}
+            ml={props.ml}
+            mr={props.mr}
             bg='rgba(250,250,250,0.8)'
             color='black'
             display={['none', 'none', 'none', 'flex']}
@@ -43,9 +45,9 @@ const PredictiveStatTable = (props) => {
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Prevalence Rate</StatLabel>
                         <Flex justifyContent='center'>
                             <StatNumber>
-                                {/* {stats[0] == 0.00 ? <MinusIcon w={6} h={6} color='gray.400' p={1} /> :
-                                    <StatArrow type={stats[0] > 0 ? 'increase' : 'decrease'} />} */}
-                                {stats[0]}
+                                {props.type === 'Predictive' ? (stats[3]-stats[0] === 0 ? <MinusIcon w={6} h={6} color='gray.400' p={1} /> :
+                                    <StatArrow type={stats[3]-stats[0] > 0 ? 'increase' : 'decrease'} />) : ''}
+                                {props.type === 'Predictive' ? stats[3] : stats[0]}
                             </StatNumber>
                         </Flex>
                     </Stat>
@@ -53,9 +55,9 @@ const PredictiveStatTable = (props) => {
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Incidence Rate</StatLabel>
                         <Flex justifyContent='center'>
                             <StatNumber>
-                                {/* {stats[1] == 0.00 ? <MinusIcon w={6} h={6} color='gray.400' p={1} /> :
-                                    <StatArrow type={stats[1] > 0 ? 'increase' : 'decrease'} />} */}
-                                {stats[1]}
+                                {props.type === 'Predictive' ? (stats[4]-stats[1] === 0 ? <MinusIcon w={6} h={6} color='gray.400' p={1} /> :
+                                    <StatArrow type={stats[4]-stats[1] > 0 ? 'increase' : 'decrease'} />) : ''}
+                                {props.type === 'Predictive' ? stats[4] : stats[1]}
                             </StatNumber>
                         </Flex>
                     </Stat>
@@ -63,9 +65,9 @@ const PredictiveStatTable = (props) => {
                         <StatLabel whiteSpace='nowrap' color='gray.600'>Case-fatality Ratio</StatLabel>
                         <Flex justifyContent='center'>
                             <StatNumber>
-                                {/* {stats[2] == 0.00 ? <MinusIcon w={6} h={6} color='gray.400' p={1} /> :
-                                    <StatArrow type={stats[1] > 0 ? 'increase' : 'decrease'} />} */}
-                                {stats[2]}
+                                {props.type === 'Predictive' ? (stats[5]-stats[2] === 0 ? <MinusIcon w={6} h={6} color='gray.400' p={1} /> :
+                                    <StatArrow type={stats[5]-stats[2] > 0 ? 'increase' : 'decrease'} />) : ''}
+                                {props.type === 'Predictive' ? stats[5] : stats[2]}
                             </StatNumber>
                         </Flex>
                     </Stat>

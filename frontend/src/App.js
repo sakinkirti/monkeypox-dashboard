@@ -4,7 +4,7 @@ import ChartView from './components/ChartView'
 import Navbar from './components/Navbar'
 import Cases from './components/CasesTable'
 import PredictiveStatTable from './components/PredictiveStatTable'
-import { Container, Flex, VStack } from '@chakra-ui/react'
+import { Container, VStack } from '@chakra-ui/react'
 import React from 'react'
 
 const Home = () => {
@@ -25,13 +25,22 @@ const Home = () => {
           <Cases.USTable top={'20%'} />
         </VStack>
       </Container>
-      <Flex minWidth='full' minHeight='full' p={0} justifyContent='center'>
-        <PredictiveStatTable
-          bottom={'3%'}
-          zIndex={10}
-          heading={'National Public Health Statistics For Today'}
-        />
-      </Flex>
+      <PredictiveStatTable
+        bottom={'3%'}
+        right={'50%'}
+        mr={'7'}
+        zIndex={10}
+        heading={'National Public Health Statistics For Today'}
+        type={'current'}
+      />
+      <PredictiveStatTable
+        bottom={'3%'}
+        left={'50%'}
+        ml={'7'}
+        zIndex={10}
+        heading={'National Predictive Statistics For Next Week'}
+        type={'Predictive'}
+      />
     </Container>
   )
 }
