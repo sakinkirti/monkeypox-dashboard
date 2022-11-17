@@ -2,7 +2,7 @@ from unittest import TestCase
 from DatabaseSyncher import DatabaseSyncher as DS
 from DatabaseUpdater import DatabaseUpdater as DU
 
-class test_DatabaseSyncher:   
+class test_DatabaseSyncher(TestCase):   
     """
     author: Saketh Dendi
     date: 10/20/2022
@@ -18,7 +18,7 @@ class test_DatabaseSyncher:
         syncher = DS()
         syncher.job()
 
-        self.assertTrue(syncher.job == "I'm working...")
+        self.assertTrue(syncher.job() == "I'm working...")
 
     def test_sync(self):
         """
@@ -26,5 +26,5 @@ class test_DatabaseSyncher:
         """
         syncher = DS()
         updater = DU()
-        syncher.sync
-        self.assertTrue(updater.get_data == "I'm working...")
+        syncher.sync()
+        self.assertTrue(updater.get_data() == "I'm working...")

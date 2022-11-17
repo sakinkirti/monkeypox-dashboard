@@ -62,7 +62,7 @@ class DatabaseUpdater:
         # generate the cleaner object
         cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
                      globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
-                     full_update=True)
+                     full_update=False)
 
         # clean the data and calcualte ph stats
         cleaner.generate_ph_stats()

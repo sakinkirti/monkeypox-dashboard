@@ -4,7 +4,6 @@ import time
 from DatabaseUpdater import DatabaseUpdater as DU
 from datetime import datetime
 
-
 class DatabaseSyncher:
     """
     author: Saketh Dendi, Sakin Kirti, and Felix Huang
