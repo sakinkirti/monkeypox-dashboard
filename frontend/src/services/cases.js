@@ -16,8 +16,7 @@ const getAllStateCases = async () => {
 }
 
 const getStateCases = async (state) => {
-    const response = await axios.get(`${baseUrl}/cases/${state}`)
-    console.log(response.data)
+    const response = await axios.get(`${baseUrl}/cases/state`, { params: { name: state } })
     return response.data
 }
 
@@ -29,14 +28,14 @@ const getStateFlags = async () => {
 const getMapGeoJSON = async () => {
     const response = await axios.get(geoJSONUrl)
     const stateCases = await getAllStateCases()
-    const modified = response.data.features.filter(state => 
-        state.properties.name !== 'Puerto Rico' 
+    const modified = response.data.features.filter(state =>
+        state.properties.name !== 'Puerto Rico'
         && state.properties.name !== 'District of Columbia'
     )
     modified.forEach((state, index) => {
         state.properties.density = stateCases[index].cumulative_cases
     })
-    var geoJSONObject = {"type": "FeatureCollection", "features": modified}
+    var geoJSONObject = { "type": "FeatureCollection", "features": modified }
     return geoJSONObject
 }
 

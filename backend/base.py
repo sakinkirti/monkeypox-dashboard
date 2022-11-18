@@ -1,10 +1,11 @@
 from flask import Flask
+from flask import request
 from DatabaseUpdater import DatabaseUpdater as DU
 app = Flask(__name__)
 
 
 @app.route('/api/cases')
-def db_retrieve_state_cases():
+def db_retrieve_all_state_cases():
     """
     method to retrieve data for specific state in database
     """
@@ -39,6 +40,42 @@ def db_retrieve_state_cases():
         result.append(cursor.fetchall()[0][0])
     conn.close()
     return result
+
+
+@app.route('/api/cases/state')
+def db_retrieve_state_cases():
+    """
+    method to retrieve case counts for specific state in database
+    """
+    state = request.args.get('name')
+    print(request.args.get('name'))
+    du = DU()
+    conn = du.db_connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        f"""
+            SELECT
+                json_agg(
+                    json_build_object(
+                        'date', confirmed_date,
+                        'num_cases', num_cases
+                    )
+                ) as cases
+            FROM (SELECT *
+                    FROM case_counts
+                    WHERE state_name='{state}'
+                    ORDER BY confirmed_date) as sub_table
+        """
+    )
+    result = cursor.fetchall()[0][0]
+    cumulative = []
+    for index, state in enumerate(result):
+        if index == 0:
+            cumulative.append({"date": state["date"], "num_cases": state["num_cases"]})
+        else:
+            cumulative.append({"date": state["date"], "num_cases": state["num_cases"]+cumulative[index-1]["num_cases"]})
+    conn.close()
+    return cumulative
 
 
 @app.route('/api/cases/total')
