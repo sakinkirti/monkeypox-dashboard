@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react'
 import { LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Line, Legend } from 'recharts'
-import { Container, Text, Icon, HStack, Tabs, TabList, Tab } from '@chakra-ui/react'
+import { Container, Text, Icon, HStack, Tabs, TabList, Tab, Heading } from '@chakra-ui/react'
 import caseService from '../services/cases'
 
 // const sampleData = [
@@ -37,18 +37,19 @@ const CustomTooltip = ({ active, payload, label }) => {
     }
 }
 
-const ChartView = () => {
+const ChartView = (props) => {
     const [data, setData] = useState({})
 
     useEffect(() => {
-        caseService.getStateCases('California').then(res => {
+        caseService.getStateCases(props.state).then(res => {
             console.log(res)
             setData(res)
         })
-    }, [])
+    }, [props.state])
 
     return (
         <Container minWidth='100%' minHeight='100vh' pt={28} pl={8} display={['none', 'none', 'flex', 'flex']} centerContent>
+            <Heading fontSize={20} mb={4} >{props.state}</Heading>
             <Tabs isFitted variant='enclosed'>
                 <TabList mb='1em'>
                     <Tab _selected={{ color: 'white', bg: 'blue.500' }}>Cumulative</Tab>
@@ -60,7 +61,7 @@ const ChartView = () => {
                     width={500}
                     height={500}
                     data={data}
-                    margin={{ top: 30, right: 30, left: 30, bottom: 30 }}
+                    margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
                 >
                     <XAxis dataKey="date" />
                     <YAxis dataKey="num_cases" />

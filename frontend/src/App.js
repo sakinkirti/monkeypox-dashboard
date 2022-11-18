@@ -5,7 +5,7 @@ import Navbar from './components/Navbar'
 import Cases from './components/CasesTable'
 import PredictiveStatTable from './components/PredictiveStatTable'
 import { Container, VStack } from '@chakra-ui/react'
-import React from 'react'
+import {React, useState} from 'react'
 
 const Home = () => {
   return (
@@ -46,6 +46,8 @@ const Home = () => {
 }
 
 const Chart = () => {
+  const [state, setState] = useState('California')
+
   return (
     <Container minWidth='full' minHeight='full' p={0}>
       <Container
@@ -56,9 +58,9 @@ const Chart = () => {
         maxWidth={'300px'}
         centerContent
       >
-        <Cases.CasesTable top={'30%'} left='35%' />
+        <Cases.CasesTable top={'30%'} left='35%' setState={setState} />
       </Container>
-      <ChartView />
+      <ChartView state={state} />
     </Container>
   )
 }
