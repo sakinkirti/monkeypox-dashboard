@@ -48,7 +48,9 @@ def db_retrieve_state_cases():
     method to retrieve case counts for specific state in database
     """
     state = request.args.get('name')
-    print(request.args.get('name'))
+    dataType = request.args.get('dataType')
+    print("Requested state: " + request.args.get('name'))
+    print("Requested chart type: " + request.args.get('dataType'))
     du = DU()
     conn = du.db_connect()
     cursor = conn.cursor()
@@ -68,14 +70,23 @@ def db_retrieve_state_cases():
         """
     )
     result = cursor.fetchall()[0][0]
-    cumulative = []
-    for index, state in enumerate(result):
-        if index == 0:
-            cumulative.append({"date": state["date"], "num_cases": state["num_cases"]})
-        else:
-            cumulative.append({"date": state["date"], "num_cases": state["num_cases"]+cumulative[index-1]["num_cases"]})
+    newResult = []
+    if dataType == "Cumulative":
+        for index, state in enumerate(result):
+            if index == 0:
+                newResult.append({"date": state["date"], "num_cases": state["num_cases"]})
+            else:
+                newResult.append({"date": state["date"], "num_cases": state["num_cases"]+newResult[index-1]["num_cases"]})
+    else:
+        for index, state in enumerate(result):
+            if index < 5:
+                continue
+            else:
+                cases = result[index-6:index+1]
+                casesSum = sum(day["num_cases"] for day in cases)
+                newResult.append({"date": state["date"], "num_cases": casesSum/7})
     conn.close()
-    return cumulative
+    return newResult
 
 
 @app.route('/api/cases/total')

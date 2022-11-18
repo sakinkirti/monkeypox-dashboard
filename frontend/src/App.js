@@ -47,6 +47,7 @@ const Home = () => {
 
 const Chart = () => {
   const [state, setState] = useState('California')
+  const [chartType, setChartType] = useState('Cumulative')
 
   return (
     <Container minWidth='full' minHeight='full' p={0}>
@@ -60,7 +61,7 @@ const Chart = () => {
       >
         <Cases.CasesTable top={'30%'} left='35%' setState={setState} />
       </Container>
-      <ChartView state={state} />
+      <ChartView state={state} chartType={chartType} setChartType={setChartType} />
     </Container>
   )
 }

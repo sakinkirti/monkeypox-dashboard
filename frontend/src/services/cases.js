@@ -15,8 +15,8 @@ const getAllStateCases = async () => {
     return response.data
 }
 
-const getStateCases = async (state) => {
-    const response = await axios.get(`${baseUrl}/cases/state`, { params: { name: state } })
+const getStateCases = async (state, dataType) => {
+    const response = await axios.get(`${baseUrl}/cases/state`, { params: { name: state, dataType: dataType } })
     return response.data
 }
 
