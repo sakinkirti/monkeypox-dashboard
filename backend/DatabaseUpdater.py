@@ -13,7 +13,7 @@ class DatabaseUpdater:
     it with values from the udpated Global.Health and CDC source.
     """
 
-    def __init__(self):
+    def __init__(self, db_reset: bool=False):
         """
         the init method which specifies the variables to connect to the db
         """
@@ -31,6 +31,9 @@ class DatabaseUpdater:
         # store the new data to update
         self.tables = ["confirmed_counts", "ph_stats"]
         self.new_data = None
+
+        # to know if we need to fully reset the database or just add the new values
+        self.reset = db_reset
 
     def db_connect(self):
         """
@@ -62,14 +65,13 @@ class DatabaseUpdater:
         # generate the cleaner object
         cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
                      globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
-                     full_update=False)
+                     full_update=self.reset)
 
         # clean the data and calcualte ph stats
         cleaner.generate_ph_stats()
 
         # generate predictions
         #cleaner.predict_cases()
-        #cleaner.predict_ph_stats()
 
         # store the data
         cleaner.set_cleaned_data()
@@ -94,29 +96,26 @@ class DatabaseUpdater:
         # return the result
         return result
 
-    def db_update(self, data=None, table=None):
+    def db_update(self):
         """
+        ** ONLY USED FOR FULL RESETS, DON'T USE OTHERWISE **
         method to update the database
+
+        params
+        data: pd.DataFrame - the data to add to the table
+        table: str - the name of the PostgreSQL table to fill
         """
 
         # connect to db generate the cursor
         conn = self.db_connect()
         cursor = conn.cursor()
+        # first clear the tables
+        cursor.execute("DELETE from case_counts")
+        cursor.execute("DELETE from ph_stats")
 
-        if data is not None and table is not None:
-            # clear the specified table
-            cursor.execute(f"DELETE from {table}")
-
-            # fill the table
-            self.fill_table(data, table, conn, cursor)
-        elif data is None and table is None:
-            # first clear the tables
-            cursor.execute("DELETE from case_counts")
-            cursor.execute("DELETE from ph_stats")
-
-            # fill both tables
-            for df, table in zip(self.new_data, self.tables):
-                self.fill_table(df, table, conn, cursor)
+        # fill both tables
+        for df, table in zip(self.new_data, self.tables):
+            self.fill_table(df, table, conn, cursor)
 
         self.db_disconnect(conn)
 
@@ -124,7 +123,7 @@ class DatabaseUpdater:
         """
         general helper method to update each specific table
 
-        params:
+        params
         df: pd.DataFrame - the dataframe to fill a table with
         table: str - the name of the table to populate
         cursor: psycopg2.connection.cursor - the cursor to execute the commands with
@@ -145,35 +144,39 @@ class DatabaseUpdater:
             print("Error: %s" % error)
             connection.rollback()
 
-
-
-
-    def cumulative_Stats(self):
+    def cumulative_stats(self):
         """
         method to find the cumulative case count and rename dataframe values
         """
 
+        # initialize
         updater = DatabaseUpdater()
         old_df = pd.Dataframe(updater.db_retrieve(table="case_counts"))
 
+        # formatting
         old_df.rename(columns={0:"confirmed_date", 1: "state_name", 2:"num_cases", 3: "is_predicted"}, inplace = True)
         old_df = pd.DataFrame.sort_values(columns=["confirmed_date", "state_name"], inplace = True)
 
-
+        # cumulative stats
         result = old_df.cumsum()
         old_df["num_cases"] = result.iloc[:,1]
 
         return old_df
 
-
     def prediction_engine(self):
+        """
+        method to predict case counts for next two weeks
+        """
 
+        # initialize
         updater = DatabaseUpdater()
-        predDf = updater.cumulative_Stats
+        predDf = updater.cumulative_stats
 
+        # formatting
         increases = predDf['num_cases'].to_numpy()
         linear = np.arrange(increases + 1)
 
+        # predictions
         x = np.polyfit(linear, increases,)
         p = np.poly1d(x)
         result = []
@@ -183,11 +186,5 @@ class DatabaseUpdater:
                 result.append(p(value))
 
         predDf["is_predicted"] = result
+        
         return predDf
-
-
-
-    def updateDataframe(self, df):
-        self.set_index('case_counts', inplace = True)
-        self.update(df.set_Index('case_counts'))
-        self.reset_index()

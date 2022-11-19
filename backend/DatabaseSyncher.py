@@ -45,19 +45,22 @@ class DatabaseSyncher:
         """
 
         # initialize helper ojects
-        updater = DU()
+        updater = DU(db_reset=False)
         conn = updater.db_connect()
         cursor = conn.cursor()
 
         # get and store data
         updater.get_data()
 
-        # update the tables
-        for table,df in zip(["case_counts", "ph_stats"], updater.new_data):
-            updater.fill_table(df, table, conn, cursor)
+        # update the tables based on the reset value
+        if updater.reset == False:
+            for table,df in zip(["case_counts", "ph_stats"], updater.new_data):
+                updater.fill_table(df, table, conn, cursor)
+        else:
+            updater.db_update()
 
         updater.db_disconnect(conn)
         print("completed filling the table")
 
 syncher = DatabaseSyncher()
-#syncher.synchTimer()
+syncher.sync()

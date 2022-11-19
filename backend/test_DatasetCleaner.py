@@ -21,9 +21,10 @@ class test_DatasetCleaner(TestCase):
 
         # check the column characteristics
         self.assertEqual(len(cleaner.confirmed_cases), 4)
-        self.assertEqual(cleaner.confirmed_cases.columns, ["confirmed_date", "state_name", "num_cases", "is_predicted"])
+        self.assertEqual(cleaner.confirmed_cases.columns.tolist(), ["confirmed_date", "state_name", "num_cases", "is_predicted"], "column names are incorrect")
         
         # check column data types
+        self.assertEqual(cleaner.confirmed_cases.dtypes().tolist(), [str, str, str, str], "data types are incorrect")
 
         # check number of NA values
         self.assertEqual(cleaner.confirmed_cases.isnull().sum(), 0)

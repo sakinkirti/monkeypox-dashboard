@@ -20,7 +20,7 @@ class DatasetCleaner:
         """
 
         # set the cleaned data
-        self.confirmed_cases = None
+        self.confirmed_cases = pd.DataFrame(columns=["confirmed_date", "state_name", "num_cases", "is_predicted"])
         self.ph_stats = None
         self.cleaned_data = [self.confirmed_cases, self.ph_stats]
 
@@ -113,7 +113,10 @@ class DatasetCleaner:
         table["confirmed_date"].astype(str)
 
         # global.health data should only be set one time
-        updater.db_update(data=table, table="case_counts")
+        # updater.db_update(data=table, table="case_counts")
+
+        # set to confirmed cases
+        self.confirmed_cases = table
 
         # set variables and return the reformed data
         return table
@@ -141,7 +144,7 @@ class DatasetCleaner:
         df = df.drop("Total").reset_index()
 
         # convert to daily counts from cumulative
-        old_df = pd.DataFrame(updater.db_retreive(table="case_counts"))
+        old_df = pd.DataFrame(updater.db_retrieve(table="case_counts"))
         old_df.rename(columns={0: "confirmed_date", 1: "state_name", 2: "num_cases", 3: "is_predicted"}, inplace=True)
         temp = old_df.groupby(["state_name"]).sum(numeric_only=True).reset_index()
         temp.sort_values(by=["state_name"], inplace=True)
@@ -149,7 +152,7 @@ class DatasetCleaner:
         df["num_cases"] = df["num_cases"] - temp["num_cases"]
 
         # store the values to update the table
-        self.confirmed_cases = df
+        self.confirmed_cases = pd.concat([self.confirmed_cases, df], ignore_index=True)
 
     def generate_ph_stats(self):
         """
