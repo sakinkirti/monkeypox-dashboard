@@ -10,7 +10,7 @@ import {
     Text
 } from '@chakra-ui/react'
 
-const CasesTable = (positions) => {
+const CasesTable = (props) => {
     const [stateFlags, setStateFlags] = useState([])
     const [statesData, setStatesData] = useState([])
 
@@ -37,7 +37,7 @@ const CasesTable = (positions) => {
     return (
         <Box
             position='absolute'
-            top={positions.top}
+            top={props.top}
             p={4}
             bg='rgba(250,250,250,0.8)'
             color='black'
@@ -51,7 +51,14 @@ const CasesTable = (positions) => {
                         {statesData.map((state => {
                             const flagUrl = stateFlags?.find(stateFlag => stateFlag.name === state.name)?.flag
                             return (
-                                <Tr key={state.name}>
+                                <Tr
+                                    key={state.name}
+                                    onClick={() => props.setState(state.name)}
+                                    cursor='pointer'
+                                    _hover={{ bg: "gray.200" }}
+                                    _active={{ bg: "gray.100" }}
+                                    fontWeight={14}
+                                >
                                     <Td p={2}>
                                         <img
                                             src={flagUrl}
@@ -70,9 +77,9 @@ const CasesTable = (positions) => {
     )
 }
 
-const USTable = (positions) => {
+const USTable = (props) => {
     const [cases, setCases] = useState(null)
-    
+
     useEffect(() => {
         casesService.getUSTotalCases().then(data => {
             setCases(data)
@@ -82,7 +89,7 @@ const USTable = (positions) => {
     return (
         <Box
             position='absolute'
-            top={positions.top}
+            top={props.top}
             p={4}
             bg='rgba(250,250,250,0.8)'
             color='black'

@@ -1,10 +1,11 @@
 from flask import Flask
+from flask import request
 from DatabaseUpdater import DatabaseUpdater as DU
 app = Flask(__name__)
 
 
 @app.route('/api/cases')
-def db_retrieve_state_cases():
+def db_retrieve_all_state_cases():
     """
     method to retrieve data for specific state in database
     """
@@ -39,6 +40,53 @@ def db_retrieve_state_cases():
         result.append(cursor.fetchall()[0][0])
     conn.close()
     return result
+
+
+@app.route('/api/cases/state')
+def db_retrieve_state_cases():
+    """
+    method to retrieve case counts for specific state in database
+    """
+    state = request.args.get('name')
+    dataType = request.args.get('dataType')
+    print("Requested state: " + request.args.get('name'))
+    print("Requested chart type: " + request.args.get('dataType'))
+    du = DU()
+    conn = du.db_connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        f"""
+            SELECT
+                json_agg(
+                    json_build_object(
+                        'date', confirmed_date,
+                        'num_cases', num_cases
+                    )
+                ) as cases
+            FROM (SELECT *
+                    FROM case_counts
+                    WHERE state_name='{state}'
+                    ORDER BY confirmed_date) as sub_table
+        """
+    )
+    result = cursor.fetchall()[0][0]
+    newResult = []
+    if dataType == "Cumulative":
+        for index, state in enumerate(result):
+            if index == 0:
+                newResult.append({"date": state["date"], "num_cases": state["num_cases"]})
+            else:
+                newResult.append({"date": state["date"], "num_cases": state["num_cases"]+newResult[index-1]["num_cases"]})
+    else:
+        for index, state in enumerate(result):
+            if index < 5:
+                continue
+            else:
+                cases = result[index-6:index+1]
+                casesSum = sum(day["num_cases"] for day in cases)
+                newResult.append({"date": state["date"], "num_cases": float(f'{casesSum/7:.2f}')})
+    conn.close()
+    return newResult
 
 
 @app.route('/api/cases/total')
