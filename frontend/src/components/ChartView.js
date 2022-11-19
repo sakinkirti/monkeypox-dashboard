@@ -82,7 +82,13 @@ const ChartView = ({ state, chartType, setChartType }) => {
                     </YAxis>
                     <Tooltip wrapperStyle={{ outline: 'none', borderWidth: 1, borderColor: 'black', borderRadius: 4 }} content={<CustomTooltip />} />
                     <Legend verticalAlign="top" height={36} margin={{ top: 30, right: 30, left: 30, bottom: 30 }} />
-                    <Line name="Number of Confirmed Cases" type="monotone" dataKey="num_cases" stroke="#0E6495" dot={false} />
+                    <Line
+                        name={chartType === "Cumulative" ? "Total Confirmed Case Count" : "7-day Case Count Moving Average"}
+                        type="monotone"
+                        dataKey="num_cases"
+                        stroke="#0E6495"
+                        dot={false}
+                    />
                 </LineChart>
             </ResponsiveContainer>
         </Container>
