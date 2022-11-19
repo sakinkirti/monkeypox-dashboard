@@ -32,8 +32,8 @@ class DatabaseSyncher:
         """
         method to update on sync timer
         """
-        schedule.every().day.at(syncher.currentTime).do(self.job)
-        schedule.every().day.at("10:30").do(self.sync)
+        schedule.every().day.at("14:48").do(self.sync)
+        schedule.every().day.at("14:48").do(self.job)
 
         while 1:
             schedule.run_pending()
@@ -60,4 +60,4 @@ class DatabaseSyncher:
         print("completed filling the table")
 
 syncher = DatabaseSyncher()
-#syncher.synchTimer()
+syncher.synchTimer()
