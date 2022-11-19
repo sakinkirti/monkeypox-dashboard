@@ -84,7 +84,7 @@ def db_retrieve_state_cases():
             else:
                 cases = result[index-6:index+1]
                 casesSum = sum(day["num_cases"] for day in cases)
-                newResult.append({"date": state["date"], "num_cases": casesSum/7})
+                newResult.append({"date": state["date"], "num_cases": float(f'{casesSum/7:.2f}')})
     conn.close()
     return newResult
 
