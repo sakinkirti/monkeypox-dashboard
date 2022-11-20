@@ -2,6 +2,10 @@ from unittest import TestCase
 from DatabaseSyncher import DatabaseSyncher as DS
 from DatabaseUpdater import DatabaseUpdater as DU
 
+import pandas as pd
+
+import datetime
+
 class test_DatabaseSyncher(TestCase):   
     """
     author: Saketh Dendi
@@ -10,21 +14,59 @@ class test_DatabaseSyncher(TestCase):
     class to test the methods and functionality in DatabaseSyncher
     """ 
 
-    def test_currentTimer(self):
+    def test_synchTimer(self):
         """
-        test the method to update the database
+        make sure the timing method works
         """
 
-        syncher = DS()
-        syncher.job()
+        # call synchTimer
+        """
+        this method is somewhat unstoppable because by design it should not return anything.
+        Instead, it's whol job is the run the entire program. As such, it enters a never ending
+        loop which updates the database every day. Testing this method would require the loop
+        to end which would eliminate the entire reason to have this loop.
+        """
 
-        self.assertTrue(syncher.job() == "I'm working...")
+    def test_currentTime(self):
+        """
+        tests if the currentTime method gives the right time
+        """
+
+        # initialize
+        test_time = "3:00"
+        syncher = DS(test_time)
+
+        # get time
+        self.assertEqual(str(datetime.now().strftime('%H:%M')), syncher.currentTime(), "syncher did not return the right time")
+
+    def test_job(self):
+        """
+        tests the job method
+        """
+
+        # initialize
+        syncher = DS("3:00")
+
+        # job
+        self.assertEqual(DS.job(), "I'm working...", "job not working properly")
 
     def test_sync(self):
         """
         test the method that syncs the database
         """
+
+        # intialize
         syncher = DS()
         updater = DU()
+
+        # gather results from the db to compare data from before and after
+        old = pd.DataFrame(updater.db_retrieve())
+
+        # sync
         syncher.sync()
-        self.assertTrue(updater.get_data() == "I'm working...")
+
+        # gather new results
+        new = pd.DataFrame(updater.db_retrieve())
+
+        # compare
+        self.assertTrue(old != new)

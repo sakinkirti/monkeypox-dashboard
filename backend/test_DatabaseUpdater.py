@@ -99,3 +99,17 @@ class test_DatabaseUpdater(TestCase):
 
         # check to make sure its the right table
         self.assertEqual(table.shape().tolist(), [3, 4])
+
+    def test_cumulative_stats(self):
+        """
+        tests the cumulative_stats method in DatabaseUpdater
+        """
+
+        # initialize
+        updater = DU()
+
+        # get stats
+        result = updater.cumulative_stats()
+        self.assertEqual(type(result) == pd.DataFrame)
+
+        print(result)

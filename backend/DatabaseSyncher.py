@@ -15,8 +15,12 @@ class DatabaseSyncher:
     It also contains a backup method in case the cron timer fails to update the database when needed.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, time: str):
+        """
+        initialization method
+        """
+
+        self.time = time
     
     def job(self):
         """
@@ -26,14 +30,19 @@ class DatabaseSyncher:
         return "I'm working..."
     
     def currentTime(self):
-        datetime.now().strftime('%H:%M')
+        """
+        returns the current time
+        """
+
+        return datetime.now().strftime('%H:%M')
 
     def synchTimer(self):
         """
         method to update on sync timer
         """
-        schedule.every().day.at("14:48").do(self.sync)
-        schedule.every().day.at("14:48").do(self.job)
+
+        schedule.every().day.at(self.time).do(self.job)
+        schedule.every().day.at(self.time).do(self.sync)
 
         while 1:
             schedule.run_pending()

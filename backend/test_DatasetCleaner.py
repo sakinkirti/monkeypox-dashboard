@@ -28,3 +28,15 @@ class test_DatasetCleaner(TestCase):
 
         # check number of NA values
         self.assertEqual(cleaner.confirmed_cases.isnull().sum(), 0)
+
+    def test_retrieve_cleaned_data(self):
+        """
+        method to test the retrieve cleaned data method
+        """
+        
+        # initialize the cleaner
+        cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
+                     globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
+                     full_update=True)
+
+        
