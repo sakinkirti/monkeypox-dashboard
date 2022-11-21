@@ -15,6 +15,41 @@ describe('US Total', () => {
     })
 })
 
+
+describe('Get All Cumulative Case Counts', () => {
+    test('Get All States Cumulative', async () => {
+        const res = {
+            data: [{
+                "cumulative_cases": 171,
+                "name": "Alabama"
+            }]
+        }
+        axios.get.mockResolvedValue(res)
+        return caseService.getCumulativeCounts().then(data => {
+            expect(data).toEqual(res.data)
+        })
+    })
+})
+
+describe('Get Specific State Counts', () => {
+    test('Get Cumulative', async () => {
+        const res = {
+            data: [{
+                "date": "2022-05-27",
+                "num_cases": 2
+            },
+            {
+                "date": "2022-05-28",
+                "num_cases": 2
+            }]
+        }
+        axios.get.mockResolvedValue(res)
+        return caseService.getStateCases('California', 'Cumulative').then(data => {
+            expect(data).toEqual(res.data)
+        })
+    })
+})
+
 describe('State Cases Call', () => {
     test('Get States Data', async () => {
         const cases = {
@@ -24,7 +59,6 @@ describe('State Cases Call', () => {
                     "num_cases": 52
                 }
             ],
-            "cumulative_cases": 169,
             "name": 'Alabama'
         }
         const res = { data: cases }

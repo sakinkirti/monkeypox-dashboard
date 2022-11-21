@@ -17,3 +17,23 @@ describe('Fetch Prediction Stats', () => {
         })
     })
 })
+
+describe('Fetch Prediction Stats', () => {
+    test('Fetch Progression', () => {
+        const res = {
+            status: 200,
+            data: [{
+                "date": "2022-06-02",
+                "num_cases": 5
+            },
+            {
+                "date": "2022-06-03",
+                "num_cases": 6
+            }]
+        }
+        axios.get.mockResolvedValue(res)
+        return predictionService.getProgression('California').then(data => {
+            expect(data).toEqual(res.data)
+        })
+    })
+})
