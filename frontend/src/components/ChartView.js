@@ -38,7 +38,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 }
 
 const ChartView = ({ state, chartType, setChartType }) => {
-    const [data, setData] = useState({})
+    const [data, setData] = useState([])
 
     useEffect(() => {
         caseService.getStateCases(state, chartType).then(res => {
@@ -48,7 +48,7 @@ const ChartView = ({ state, chartType, setChartType }) => {
 
     return (
         <Container minWidth='100%' minHeight='100vh' pt={28} pl={8} display={['none', 'none', 'flex', 'flex']} centerContent>
-            <Heading fontSize={20} mb={4} >{state}</Heading>
+            <Heading fontSize={20} mb={4}>{state}</Heading>
             <Tabs isFitted variant='enclosed'>
                 <TabList mb='1em'>
                     <Tab

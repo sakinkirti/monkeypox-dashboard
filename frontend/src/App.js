@@ -5,7 +5,7 @@ import Navbar from './components/Navbar'
 import Cases from './components/CasesTable'
 import PredictiveStatTable from './components/PredictiveStatTable'
 import { Container, VStack } from '@chakra-ui/react'
-import {React, useState} from 'react'
+import { React, useState } from 'react'
 
 const Home = () => {
   return (

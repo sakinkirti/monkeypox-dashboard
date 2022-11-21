@@ -6,7 +6,7 @@ const geoJSONUrl = 'https://raw.githubusercontent.com/PublicaMundi/MappingAPI/ma
 const flagsUrl = 'https://raw.githubusercontent.com/CivilServiceUSA/us-states/master/data/states.json'
 
 const getUSTotalCases = async () => {
-    const response = await axios.get(`${baseUrl}/cases/total`)
+    const response = await axios.get(`${baseUrl}/cases/USTotal`)
     return response.data
 }
 
@@ -25,9 +25,14 @@ const getStateFlags = async () => {
     return response.data
 }
 
+const getCumulativeCounts = async () => {
+    const response = await axios.get(`${baseUrl}/cases/total`)
+    return response.data
+}
+
 const getMapGeoJSON = async () => {
     const response = await axios.get(geoJSONUrl)
-    const stateCases = await getAllStateCases()
+    const stateCases = await getCumulativeCounts()
     const modified = response.data.features.filter(state =>
         state.properties.name !== 'Puerto Rico'
         && state.properties.name !== 'District of Columbia'
@@ -44,6 +49,7 @@ const caseService = {
     getAllStateCases,
     getStateCases,
     getStateFlags,
+    getCumulativeCounts,
     getMapGeoJSON
 }
 

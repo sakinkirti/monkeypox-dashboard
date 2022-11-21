@@ -15,10 +15,8 @@ const CasesTable = (props) => {
     const [statesData, setStatesData] = useState([])
 
     useEffect(() => {
-        casesService.getAllStateCases().then(data => {
-            const reformatted = data.map(state => {
-                return ({ name: state.name, cumulative_cases: state.cumulative_cases })
-            }).sort((a, b) => {
+        casesService.getCumulativeCounts().then(data => {
+            const reformatted = data.sort((a, b) => {
                 return b.cumulative_cases - a.cumulative_cases
             })
             setStatesData(reformatted)
