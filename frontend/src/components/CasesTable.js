@@ -7,12 +7,15 @@ import {
     Tbody,
     Tr,
     Td,
-    Text
+    Text,
+    Input
 } from '@chakra-ui/react'
 
-const CasesTable = (props) => {
+const CasesTable = ({ top, setState, view }) => {
     const [stateFlags, setStateFlags] = useState([])
     const [statesData, setStatesData] = useState([])
+    const [filter, setFilter] = useState('')
+    const [filteredStates, setFilteredStates] = useState([])
 
     useEffect(() => {
         casesService.getCumulativeCounts().then(data => {
@@ -32,10 +35,21 @@ const CasesTable = (props) => {
         })
     }, [])
 
+    useEffect(() => {
+        if (filter) {
+            const regex = new RegExp(filter, 'i');
+            const filtered = () =>
+                statesData.filter(state =>
+                    state.name.match(regex)
+                )
+            setFilteredStates(filtered)
+        }
+    }, [filter, statesData])
+
     return (
         <Box
             position='absolute'
-            top={props.top}
+            top={top}
             p={4}
             bg='rgba(250,250,250,0.8)'
             color='black'
@@ -43,39 +57,51 @@ const CasesTable = (props) => {
             display={['none', 'none', 'block', 'block']}
         >
             <Heading fontSize={20} pb={5} textAlign='center'>States By Confirmed Cases</Heading>
-            <Box overflowY="auto" maxHeight="300px" maxWidth='300px'>
-                <Table variant="simple">
-                    <Tbody maxWidth='full' fontSize={16}>
-                        {statesData.map((state => {
-                            const flagUrl = stateFlags?.find(stateFlag => stateFlag.name === state.name)?.flag
-                            return (
-                                <Tr
-                                    key={state.name}
-                                    onClick={() => props.setState(state.name)}
-                                    cursor='pointer'
-                                    _hover={{ bg: "gray.200" }}
-                                    _active={{ bg: "gray.100" }}
-                                    fontWeight={14}
-                                >
-                                    <Td p={2}>
-                                        <img
-                                            src={flagUrl}
-                                            alt={state.name}
-                                        />
-                                    </Td>
-                                    <Td p={4} whiteSpace='nowrap'>{state.name}</Td>
-                                    <Td p={4}>{state.cumulative_cases}</Td>
-                                </Tr>
-                            )
-                        }))}
-                    </Tbody>
-                </Table>
-            </Box>
+            <Input placeholder="Search for a state" mb={4} value={filter} onChange={(e) => setFilter(e.target.value)} />
+            {(filteredStates.length === 0 && filter.length !== 0)
+                ? <Text fontSize={16}>No matching state found.</Text>
+                : <Box overflowY="auto" maxHeight="300px" maxWidth='300px'>
+                    <Table variant="simple">
+                        <Tbody maxWidth='full' fontSize={16}>
+                            {((filteredStates.length !== 0 && filter.length !== 0)
+                                ? filteredStates
+                                : statesData).map((state => {
+                                    const flagUrl = stateFlags?.find(stateFlag => stateFlag.name === state.name)?.flag
+                                    return (
+                                        <Tr
+                                            key={state.name}
+                                            onClick={(e) => {
+                                                if (view === "Chart") {
+                                                    setState(state.name)
+                                                }
+                                                console.log(state.name)
+                                            }}
+                                            cursor='pointer'
+                                            _hover={{ bg: "gray.200" }}
+                                            _active={{ bg: "gray.100" }}
+                                            fontWeight={14}
+                                        >
+                                            <Td p={2}>
+                                                <img
+                                                    src={flagUrl}
+                                                    alt={state.name}
+                                                />
+                                            </Td>
+                                            <Td p={4} whiteSpace='nowrap'>{state.name}</Td>
+                                            <Td p={4}>{state.cumulative_cases}</Td>
+                                        </Tr>
+                                    )
+                                }))
+                            }
+                        </Tbody>
+                    </Table>
+                </Box>
+            }
         </Box>
     )
 }
 
-const USTable = (props) => {
+const USTable = ({ top }) => {
     const [cases, setCases] = useState(null)
 
     useEffect(() => {
@@ -87,7 +113,7 @@ const USTable = (props) => {
     return (
         <Box
             position='absolute'
-            top={props.top}
+            top={top}
             p={4}
             bg='rgba(250,250,250,0.8)'
             color='black'

@@ -21,7 +21,7 @@ const Home = () => {
         centerContent
       >
         <VStack>
-          <Cases.CasesTable top={'35%'} />
+          <Cases.CasesTable top={'35%'} view={'Map'} />
           <Cases.USTable top={'20%'} />
         </VStack>
       </Container>
@@ -59,7 +59,7 @@ const Chart = () => {
         maxWidth={'300px'}
         centerContent
       >
-        <Cases.CasesTable top={'30%'} left='35%' setState={setState} />
+        <Cases.CasesTable top={'30%'} setState={setState} view={'Chart'} />
       </Container>
       <ChartView state={state} chartType={chartType} setChartType={setChartType} />
     </Container>
