@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, GeoJSON, ZoomControl, Popup, CircleMarker } from 'react-leaflet'
+import { MapContainer, TileLayer, GeoJSON, ZoomControl, Popup, CircleMarker, useMap } from 'react-leaflet'
 import { React, useState, useEffect, useRef } from 'react'
 import casesService from '../services/cases'
 import {
@@ -64,11 +64,20 @@ const coords = [
     { lat: 43.075968, lng: -107.290284 } // Wyoming
 ]
 
+const MapHook = ({ positions }) => {
+    const map = useMap()
+    if (positions) {
+        map.flyTo(positions, 5)
+    }
+    return null
+}
+
 const MapView = ({ markerIndex }) => {
     const [geoJSONData, setGeoJSONData] = useState([])
     const [casesData, setCasesData] = useState([])
     const [refsLoadingDone, setRefsLoadingDone] = useState(false)
     const markerRefs = useRef({})
+    const [markerPositions, setMarkerPositions] = useState(null)
 
     useEffect(() => {
         casesService.getAllStateCases().then(res => {
@@ -85,8 +94,7 @@ const MapView = ({ markerIndex }) => {
     useEffect(() => {
         if (markerIndex && refsLoadingDone) {
             const markerToOpen = markerRefs.current[markerIndex]
-            console.log(markerToOpen)
-            console.log(markerIndex)
+            setMarkerPositions(markerToOpen._latlng)
             markerToOpen.openPopup()
         }
     }, [markerIndex, refsLoadingDone])
@@ -94,8 +102,9 @@ const MapView = ({ markerIndex }) => {
     return (
         <MapContainer
             style={{ height: "100vh", minWidth: "100%", zIndex: '1' }}
-            center={[39.8283, -98.5795]} zoom={4}
-            minZoom={3}
+            center={[39.8283, -98.5795]}
+            zoom={4}
+            minZoom={2}
             maxZoom={10}
             zoomControl={false}
             zoomSnap={0.75}
@@ -104,6 +113,7 @@ const MapView = ({ markerIndex }) => {
             maxBounds={[[-5, -260], [75, 40]]}
             maxBoundsViscoity={1}
         >
+            <MapHook positions={markerPositions} />
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -123,6 +133,7 @@ const MapView = ({ markerIndex }) => {
                     key={index}
                     zIndex={50}
                     pane="markerPane"
+                    eventHandlers={{ click: () => setMarkerPositions(markerRefs.current[index]._latlng) }}
                 >
                     <Popup>
                         Total Confirmed Case Count: {casesData[index]?.state}
