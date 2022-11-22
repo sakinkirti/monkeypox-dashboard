@@ -8,10 +8,12 @@ import { Container, VStack } from '@chakra-ui/react'
 import { React, useState } from 'react'
 
 const Home = () => {
+  const [markerIndex, setMarkerIndex] = useState()
+
   return (
     <Container minWidth='full' minHeight='full' p={0}>
       <Map.Legend top={'35%'} right={'2%'} />
-      <Map.MapView />
+      <Map.MapView markerIndex={markerIndex} />
       <Container
         p={0}
         ml={12}
@@ -21,7 +23,7 @@ const Home = () => {
         centerContent
       >
         <VStack>
-          <Cases.CasesTable top={'35%'} view={'Map'} />
+          <Cases.CasesTable top={'35%'} view={'Map'} setMarkerIndex={setMarkerIndex} />
           <Cases.USTable top={'20%'} />
         </VStack>
       </Container>

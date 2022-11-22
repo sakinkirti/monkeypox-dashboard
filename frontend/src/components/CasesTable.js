@@ -11,7 +11,7 @@ import {
     Input
 } from '@chakra-ui/react'
 
-const CasesTable = ({ top, setState, view }) => {
+const CasesTable = ({ top, setState, view, setMarkerIndex }) => {
     const [stateFlags, setStateFlags] = useState([])
     const [statesData, setStatesData] = useState([])
     const [filter, setFilter] = useState('')
@@ -19,7 +19,8 @@ const CasesTable = ({ top, setState, view }) => {
 
     useEffect(() => {
         casesService.getCumulativeCounts().then(data => {
-            const reformatted = data.sort((a, b) => {
+            var id = 0
+            const reformatted = data.map(state => ({ ...state, id: id++ })).sort((a, b) => {
                 return b.cumulative_cases - a.cumulative_cases
             })
             setStatesData(reformatted)
@@ -73,8 +74,9 @@ const CasesTable = ({ top, setState, view }) => {
                                             onClick={(e) => {
                                                 if (view === "Chart") {
                                                     setState(state.name)
+                                                } else if (view === "Map") {
+                                                    setMarkerIndex(state.id)
                                                 }
-                                                console.log(state.name)
                                             }}
                                             cursor='pointer'
                                             _hover={{ bg: "gray.200" }}

@@ -1,6 +1,5 @@
 import { MapContainer, TileLayer, GeoJSON, ZoomControl, Popup, CircleMarker } from 'react-leaflet'
-import { React, useState, useEffect } from 'react'
-import ReactDOMServer from 'react-dom/server'
+import { React, useState, useEffect, useRef } from 'react'
 import casesService from '../services/cases'
 import {
     Box,
@@ -12,62 +11,64 @@ import {
 } from '@chakra-ui/react'
 import { LineChart, ResponsiveContainer, XAxis, YAxis, Line } from 'recharts'
 
-const MapView = () => {
+const coords = [
+    { lat: 32.318231, lng: -86.902298 }, // Alabama
+    { lat: 63.588753, lng: -154.493062 }, // Alaska
+    { lat: 34.048928, lng: -111.093731 }, // Arizona
+    { lat: 35.20105, lng: -91.831833 }, // Arkansas
+    { lat: 36.778261, lng: -119.417932 }, // California
+    { lat: 39.550051, lng: -105.782067 }, // Colorado
+    { lat: 41.603221, lng: -73.087749 }, // Connecticut
+    { lat: 38.910832, lng: -75.52767 }, // Delaware
+    { lat: 27.664827, lng: -81.515754 }, // Florida
+    { lat: 32.157435, lng: -82.907123 }, // Georgia
+    { lat: 19.898682, lng: -155.665857 }, // Hawaii
+    { lat: 44.068202, lng: -114.742041 }, // Idaho
+    { lat: 40.633125, lng: -89.398528 }, // Illinois
+    { lat: 40.551217, lng: -85.602364 }, // Indiana
+    { lat: 41.878003, lng: -93.097702 }, // Iowa
+    { lat: 39.011902, lng: -98.484246 }, // Kansas
+    { lat: 37.839333, lng: -84.270018 }, // Kentucky
+    { lat: 31.244823, lng: -92.145024 }, // Louisana
+    { lat: 45.253783, lng: -69.445469 }, // Maine
+    { lat: 39.045755, lng: -76.641271 }, // Maryland
+    { lat: 42.407211, lng: -71.382437 }, // Massachusetts
+    { lat: 44.314844, lng: -85.602364 }, // Michigan
+    { lat: 46.729553, lng: -94.6859 }, // Minnesota
+    { lat: 32.354668, lng: -89.398528 }, // Mississippi
+    { lat: 37.964253, lng: -91.831833 }, // Missouri
+    { lat: 46.879682, lng: -110.362566 }, // Montana
+    { lat: 41.492537, lng: -99.901813 }, // Nebraska
+    { lat: 38.80261, lng: -116.419389 }, // Nevada
+    { lat: 43.193852, lng: -71.572395 }, // New Hampshire
+    { lat: 40.058324, lng: -74.405661 }, // New Jersey
+    { lat: 34.97273, lng: -105.032363 }, // New Mexico
+    { lat: 43.299428, lng: -74.217933 }, // New York
+    { lat: 35.759573, lng: -79.0193 }, // North Carolina
+    { lat: 47.551493, lng: -101.002012 }, // North Dakota
+    { lat: 40.417287, lng: -82.907123 }, // Ohio
+    { lat: 35.007752, lng: -97.092877 }, // Oklahoma
+    { lat: 43.804133, lng: -120.554201 }, // Oregon
+    { lat: 41.203322, lng: -77.194525 }, // Pennsylvania
+    { lat: 41.580095, lng: -71.477429 }, // Rhode Island
+    { lat: 33.836081, lng: -81.163725 }, // South Carolina
+    { lat: 43.969515, lng: -99.901813 }, // South Dakota
+    { lat: 35.517491, lng: -86.580447 }, // Tennessee
+    { lat: 31.968599, lng: -99.901813 }, // Texas
+    { lat: 39.32098, lng: -111.093731 }, // Utah
+    { lat: 44.558803, lng: -72.577841 }, // Vermont
+    { lat: 37.431573, lng: -78.656894 }, // Virginia
+    { lat: 47.751074, lng: -120.740139 }, // Washington
+    { lat: 38.597626, lng: -80.454903 }, // West Virginia
+    { lat: 43.78444, lng: -88.787868 }, // Wisconsin
+    { lat: 43.075968, lng: -107.290284 } // Wyoming
+]
+
+const MapView = ({ markerIndex }) => {
     const [geoJSONData, setGeoJSONData] = useState([])
     const [casesData, setCasesData] = useState([])
-
-    const coords = [
-        { lat: 32.318231, lng: -86.902298 }, // Alabama
-        { lat: 63.588753, lng: -154.493062 }, // Alaska
-        { lat: 34.048928, lng: -111.093731 }, // Arizona
-        { lat: 35.20105, lng: -91.831833 }, // Arkansas
-        { lat: 36.778261, lng: -119.417932 }, // California
-        { lat: 39.550051, lng: -105.782067 }, // Colorado
-        { lat: 41.603221, lng: -73.087749 }, // Connecticut
-        { lat: 38.910832, lng: -75.52767 }, // Delaware
-        { lat: 27.664827, lng: -81.515754 }, // Florida
-        { lat: 32.157435, lng: -82.907123 }, // Georgia
-        { lat: 19.898682, lng: -155.665857 }, // Hawaii
-        { lat: 44.068202, lng: -114.742041 }, // Idaho
-        { lat: 40.633125, lng: -89.398528 }, // Illinois
-        { lat: 40.551217, lng: -85.602364 }, // Indiana
-        { lat: 41.878003, lng: -93.097702 }, // Iowa
-        { lat: 39.011902, lng: -98.484246 }, // Kansas
-        { lat: 37.839333, lng: -84.270018 }, // Kentucky
-        { lat: 31.244823, lng: -92.145024 }, // Louisana
-        { lat: 45.253783, lng: -69.445469 }, // Maine
-        { lat: 39.045755, lng: -76.641271 }, // Maryland
-        { lat: 42.407211, lng: -71.382437 }, // Massachusetts
-        { lat: 44.314844, lng: -85.602364 }, // Michigan
-        { lat: 46.729553, lng: -94.6859 }, // Minnesota
-        { lat: 32.354668, lng: -89.398528 }, // Mississippi
-        { lat: 37.964253, lng: -91.831833 }, // Missouri
-        { lat: 46.879682, lng: -110.362566 }, // Montana
-        { lat: 41.492537, lng: -99.901813 }, // Nebraska
-        { lat: 38.80261, lng: -116.419389 }, // Nevada
-        { lat: 43.193852, lng: -71.572395 }, // New Hampshire
-        { lat: 40.058324, lng: -74.405661 }, // New Jersey
-        { lat: 34.97273, lng: -105.032363 }, // New Mexico
-        { lat: 43.299428, lng: -74.217933 }, // New York
-        { lat: 35.759573, lng: -79.0193 }, // North Carolina
-        { lat: 47.551493, lng: -101.002012 }, // North Dakota
-        { lat: 40.417287, lng: -82.907123 }, // Ohio
-        { lat: 35.007752, lng: -97.092877 }, // Oklahoma
-        { lat: 43.804133, lng: -120.554201 }, // Oregon
-        { lat: 41.203322, lng: -77.194525 }, // Pennsylvania
-        { lat: 41.580095, lng: -71.477429 }, // Rhode Island
-        { lat: 33.836081, lng: -81.163725 }, // South Carolina
-        { lat: 43.969515, lng: -99.901813 }, // South Dakota
-        { lat: 35.517491, lng: -86.580447 }, // Tennessee
-        { lat: 31.968599, lng: -99.901813 }, // Texas
-        { lat: 39.32098, lng: -111.093731 }, // Utah
-        { lat: 44.558803, lng: -72.577841 }, // Vermont
-        { lat: 37.431573, lng: -78.656894 }, // Virginia
-        { lat: 47.751074, lng: -120.740139 }, // Washington
-        { lat: 38.597626, lng: -80.454903 }, // West Virginia
-        { lat: 43.78444, lng: -88.787868 }, // Wisconsin
-        { lat: 43.075968, lng: -107.290284 } // Wyoming
-    ]
+    const [refsLoadingDone, setRefsLoadingDone] = useState(false)
+    const markerRefs = useRef({})
 
     useEffect(() => {
         casesService.getAllStateCases().then(res => {
@@ -80,6 +81,15 @@ const MapView = () => {
             setGeoJSONData(data)
         })
     }, [])
+
+    useEffect(() => {
+        if (markerIndex && refsLoadingDone) {
+            const markerToOpen = markerRefs.current[markerIndex]
+            console.log(markerToOpen)
+            console.log(markerIndex)
+            markerToOpen.openPopup()
+        }
+    }, [markerIndex, refsLoadingDone])
 
     return (
         <MapContainer
@@ -99,7 +109,21 @@ const MapView = () => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {coords?.map(({ lat, lng }, index) => (
-                <CircleMarker center={[lat, lng]} radius={4} pathOptions={{ color: '#e07a5f', weight: 1 }} key={index} zIndex={50} pane="markerPane">
+                <CircleMarker
+                    ref={(marker) => {
+                        markerRefs.current[index] = marker;
+                        if (index === coords.length - 1 && !refsLoadingDone) {
+                            setRefsLoadingDone(true);
+                        }
+                    }}
+                    center={[lat, lng]}
+                    radius={4}
+                    pathOptions={{ color: '#e07a5f', weight: 1 }}
+                    id={index}
+                    key={index}
+                    zIndex={50}
+                    pane="markerPane"
+                >
                     <Popup>
                         Total Confirmed Case Count: {casesData[index]?.state}
                         <ResponsiveContainer position='absolute' minHeight="20vh" width="100%" zIndex={25}>
@@ -153,7 +177,6 @@ const getColor = (density) => {
     )
 }
 
-// 1 to 10, 11 to 50, 51 to 100, 101 to 500, and >500
 const Legend = (positions) => {
     return (
         <Box
