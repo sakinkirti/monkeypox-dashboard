@@ -84,7 +84,7 @@ class test_DatabaseUpdater(TestCase):
 
         # make sure the right table was updated
         self.assertEqual(test_df.columns.tolist(), ["confirmed_date", "state_name", "num_cases", "is_predicted"], "incorrect columns detected")
-        self.assertEqual(test_df.shape, (3, 4), "table shape is not correct")
+        self.assertEqual(test_df.shape, (9, 4), "table shape is not correct")
 
     def test_db_retrieve(self):
         """
@@ -98,7 +98,7 @@ class test_DatabaseUpdater(TestCase):
         table = pd.DataFrame(updater.db_retrieve(table="test_table"))
 
         # check to make sure its the right table
-        self.assertEqual(table.shape().tolist(), [3, 4])
+        self.assertEqual(table.shape, (9, 4))
 
     def test_cumulative_stats(self):
         """
@@ -110,6 +110,6 @@ class test_DatabaseUpdater(TestCase):
 
         # get stats
         result = updater.cumulative_stats()
-        self.assertEqual(type(result) == pd.DataFrame)
+        self.assertTrue(type(result) == pd.DataFrame)
 
         print(result)

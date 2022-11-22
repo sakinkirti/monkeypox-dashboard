@@ -151,11 +151,11 @@ class DatabaseUpdater:
 
         # initialize
         updater = DatabaseUpdater()
-        old_df = pd.Dataframe(updater.db_retrieve(table="case_counts"))
+        old_df = pd.DataFrame(updater.db_retrieve(table="case_counts"))
 
         # formatting
         old_df.rename(columns={0:"confirmed_date", 1: "state_name", 2:"num_cases", 3: "is_predicted"}, inplace = True)
-        old_df = pd.DataFrame.sort_values(columns=["confirmed_date", "state_name"], inplace = True)
+        old_df = old_df.sort_values(by=["confirmed_date", "state_name"])
 
         # cumulative stats
         result = old_df.cumsum()
@@ -170,7 +170,7 @@ class DatabaseUpdater:
 
         # initialize
         updater = DatabaseUpdater()
-        predDf = updater.cumulative_stats
+        predDf = updater.cumulative_stats()
 
         # formatting
         increases = predDf['num_cases'].to_numpy()
