@@ -46,15 +46,15 @@ const Navbar = () => {
                                 variant='outline'
                             />
                             <MenuList>
-                                <MenuItem>
-                                    <Link to='/'>Map</Link>
-                                </MenuItem>
-                                <MenuItem>
-                                    <Link to='/chartsview'>Charts</Link>
-                                </MenuItem>
-                                <MenuItem>
-                                    <Link to='/help'>Help</Link>
-                                </MenuItem>
+                                <Link to="/">
+                                    <MenuItem as="a">Map</MenuItem>
+                                </Link>
+                                <Link to="/charts">
+                                    <MenuItem as="a">Charts</MenuItem>
+                                </Link>
+                                <Link to="/help">
+                                    <MenuItem as="a">Help</MenuItem>
+                                </Link>
                             </MenuList>
                         </Menu>
                     </Flex>

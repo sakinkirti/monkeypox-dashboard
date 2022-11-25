@@ -1,11 +1,12 @@
+import { React, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Map from './components/MapView'
 import ChartView from './components/ChartView'
 import Navbar from './components/Navbar'
 import Cases from './components/CasesTable'
 import PredictiveStatTable from './components/PredictiveStatTable'
+import Help from './components/Help'
 import { Container, VStack } from '@chakra-ui/react'
-import { React, useState } from 'react'
 
 const Home = () => {
   const [markerIndex, setMarkerIndex] = useState()
@@ -75,6 +76,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/charts" element={<Chart />} />
+        <Route path="/help" element={<Help />} />
       </Routes>
     </Container>
   )
