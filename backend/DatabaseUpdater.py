@@ -113,9 +113,11 @@ class DatabaseUpdater:
         cursor.execute("DELETE from case_counts")
         cursor.execute("DELETE from ph_stats")
 
+
         # fill both tables
         for df, table in zip(self.new_data, self.tables):
             self.fill_table(df, table, conn, cursor)
+
 
         self.db_disconnect(conn)
 
@@ -128,6 +130,9 @@ class DatabaseUpdater:
         table: str - the name of the table to populate
         cursor: psycopg2.connection.cursor - the cursor to execute the commands with
         """
+        if table == "prediction":
+            cursor.execute("DELETE from predictions")
+
 
         # data to insertable format
         tuples = [tuple(x) for x in df.to_numpy()]
@@ -158,9 +163,8 @@ class DatabaseUpdater:
         old_df = old_df.sort_values(by=["confirmed_date", "state_name"])
 
         # cumulative stats
-        result = old_df.cumsum()
-        old_df["num_cases"] = result.iloc[:,1]
-
+        old_df["num_cases"] = old_df["num_cases"].cumsum()
+        old_df = old_df.iloc[:,:-2]
         return old_df
 
     def prediction_engine(self):
@@ -171,6 +175,7 @@ class DatabaseUpdater:
         # initialize
         updater = DatabaseUpdater()
         predDf = updater.cumulative_stats()
+        predDf = predDf(index = range(14))
 
         # formatting
         increases = predDf['num_cases'].to_numpy()
@@ -186,5 +191,14 @@ class DatabaseUpdater:
                 result.append(p(value))
 
         predDf["is_predicted"] = result
-        
+
+        conn = self.db_connect()
+        cursor = conn.cursor()
+
+        self.fill_table(predDf, "predictions", conn, cursor)
+        self.db_disconnect(conn)
+
+
         return predDf
+        
+
