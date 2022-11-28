@@ -63,9 +63,6 @@ class DatasetCleaner:
         - the cleaned global.health data
         """
 
-        from DatabaseUpdater import DatabaseUpdater as DU
-        updater = DU()
-
         # read the csv
         df = pd.read_csv(data, low_memory=False)
 

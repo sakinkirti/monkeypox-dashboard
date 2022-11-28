@@ -71,5 +71,5 @@ class DatabaseSyncher:
         updater.db_disconnect(conn)
         print("completed filling the table")
 
-syncher = DatabaseSyncher()
+syncher = DatabaseSyncher(time="14:01")
 syncher.synchTimer()

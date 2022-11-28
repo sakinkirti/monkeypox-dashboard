@@ -113,7 +113,6 @@ class DatabaseUpdater:
         cursor.execute("DELETE from case_counts")
         cursor.execute("DELETE from ph_stats")
 
-
         # fill both tables
         for df, table in zip(self.new_data, self.tables):
             self.fill_table(df, table, conn, cursor)
@@ -155,8 +154,7 @@ class DatabaseUpdater:
         """
 
         # initialize
-        updater = DatabaseUpdater()
-        old_df = pd.DataFrame(updater.db_retrieve(table="case_counts"))
+        old_df = pd.DataFrame(self.db_retrieve(table="case_counts"))
 
         # formatting
         old_df.rename(columns={0:"confirmed_date", 1: "state_name", 2:"num_cases", 3: "is_predicted"}, inplace = True)
@@ -173,8 +171,7 @@ class DatabaseUpdater:
         """
 
         # initialize
-        updater = DatabaseUpdater()
-        predDf = updater.cumulative_stats()
+        predDf = self.cumulative_stats()
         predDf = predDf(index = range(14))
 
         # formatting
@@ -192,12 +189,12 @@ class DatabaseUpdater:
 
         predDf["is_predicted"] = result
 
+        # update db
         conn = self.db_connect()
         cursor = conn.cursor()
-
+        cursor.execute("DELETE from predictions")
         self.fill_table(predDf, "predictions", conn, cursor)
         self.db_disconnect(conn)
-
 
         return predDf
         

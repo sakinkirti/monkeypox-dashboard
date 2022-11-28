@@ -14,20 +14,17 @@ class test_DatasetCleaner(TestCase):
         method to test get_globalhealth_data method in DatasetCleaner
         """
 
-        # tests full update functionality - without any other commands, this should update the db
+        # tests full update functionality - without any other commands, this should update the data stored in new_data 
         cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
                      globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
                      full_update=False)
 
-        # check the column characteristics
-        self.assertEqual(len(cleaner.confirmed_cases), 4)
-        self.assertEqual(cleaner.confirmed_cases.columns.tolist(), ["confirmed_date", "state_name", "num_cases", "is_predicted"], "column names are incorrect")
-        
-        # check column data types
-        self.assertEqual(cleaner.confirmed_cases.dtypes().tolist(), [str, str, str, str], "data types are incorrect")
+        # check the column characteristics - 52, one for each state + PR and DC
+        self.assertEqual(len(cleaner.confirmed_cases), 52)
+        self.assertEqual(list(cleaner.confirmed_cases.columns), ["confirmed_date", "state_name", "num_cases", "is_predicted"], "column names are incorrect")
 
-        # check number of NA values
-        self.assertEqual(cleaner.confirmed_cases.isnull().sum(), 0)
+        # check number of NA values - should be 0
+        self.assertEqual(cleaner.confirmed_cases.isnull().sum().sum(), 0)
 
     def test_retrieve_cleaned_data(self):
         """
@@ -39,4 +36,22 @@ class test_DatasetCleaner(TestCase):
                      globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
                      full_update=True)
 
+        # retreive the data
+        case_counts, ph_stats = cleaner.retrieve_cleaned_data()
+
+        # similar tests as wrangle testing method
+        self.assertTrue(len(case_counts) > 52)
+        self.assertEqual(list(case_counts.columns), ["confirmed_date", "state_name", "num_cases", "is_predicted"], "column names are incorrect")
+        self.assertEqual(case_counts.isnull().sum().sum(), 0)
+
+    def test_read_globalhealth_data(self):
+        """
+        method to test the read global.health data method
+        """
+
+        cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
+                     globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
+                     full_update=True)
+
+        cleaner.read_globalhealth_data()
         
