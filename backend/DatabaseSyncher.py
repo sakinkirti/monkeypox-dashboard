@@ -68,6 +68,10 @@ class DatabaseSyncher:
         else:
             updater.db_update()
 
+        # generate the predictions
+        updater.prediction_engine()
+
+        # disconnect from db
         updater.db_disconnect(conn)
         print("completed filling the table")
 

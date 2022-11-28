@@ -70,9 +70,6 @@ class DatabaseUpdater:
         # clean the data and calcualte ph stats
         cleaner.generate_ph_stats()
 
-        # generate predictions
-        #cleaner.predict_cases()
-
         # store the data
         cleaner.set_cleaned_data()
         self.new_data = cleaner.retrieve_cleaned_data()
@@ -197,5 +194,3 @@ class DatabaseUpdater:
         self.db_disconnect(conn)
 
         return predDf
-        
-
