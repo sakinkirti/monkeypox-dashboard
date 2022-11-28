@@ -1,0 +1,15 @@
+This short file contains instructions for loading files onto the ec2 instance
+
+Notes: 
+- This short tutorial uses the scp protocol to securely transfer files from the local machine to the ec2 instance.
+- These instructions assume that the user previously has generated a pem file with proper encryption. If encryption is needed, run the following command in the terminal of the local machine
+    >>> chmod 400 /path/to/pem/file
+
+1. Launch and connect to the ec2 instance from AWS
+2. Locate the instance id. It will look something like: ec2-user@ec2-52-86-173-111.compute-1.amazonaws.com (In our case, this is actually our ec2 instance id)
+3. In the terminal of the local machine, type the following
+    >>> scp -i path/to/pem/file path/to/local/file path/to/destination/folder
+   In our case, say we wanted to upload the database updater to the ec2 instance, we would do the following:
+    >>> scp -i /Users/sakinkirti/Downloads/monkeypox-ec2.pem /Users/sakinkirti/Programming/CWRU/CSDS393/monkeypox-dashboard/backend/DatabaseSyncher.py ec2-user@ec2-52-86-173-111.compute-1.amazonaws.com:/home/ec2-user/monkeypox_dashboard
+4. Once the files are transferred, they can be run from the command line as one normally would run them. For example, the following command runs the DatabaseSyncher file on the ec2 instance.
+    >>> python3 DatabaseSyncher.py
