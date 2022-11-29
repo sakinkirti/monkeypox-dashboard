@@ -183,7 +183,3 @@ class DatasetCleaner:
         ph_table.loc[0] = [p_curr, i_curr, cf_curr, p_pred, i_pred, cf_pred]
         self.ph_stats = ph_table
 
-    def predict_cases(self):
-        """
-        method to create predictions based on the cleaned global health data
-        """

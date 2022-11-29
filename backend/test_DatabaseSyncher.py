@@ -48,7 +48,7 @@ class test_DatabaseSyncher(TestCase):
         syncher = DS("3:00")
 
         # job
-        self.assertEqual(DS.job, "I'm working...", "job not working properly")
+        self.assertEqual(DS.job(), "I'm working...", "job not working properly")
 
     def test_sync(self):
         """
@@ -63,7 +63,7 @@ class test_DatabaseSyncher(TestCase):
         old = pd.DataFrame(updater.db_retrieve("case_counts"))
 
         # sync
-        syncher.sync()
+        #syncher.sync()
 
         # gather new results
         new = pd.DataFrame(updater.db_retrieve("case_counts"))

@@ -21,12 +21,14 @@ class DatabaseSyncher:
         """
 
         self.time = time
+        print(f"Updater set to update at {self.time} UTC daily")
     
     def job(self):
         """
         notify
         """
 
+        print("I'm working...")
         return "I'm working..."
     
     def currentTime(self):
@@ -69,11 +71,17 @@ class DatabaseSyncher:
             updater.db_update()
 
         # generate the predictions
-        updater.prediction_engine()
+        #updater.prediction_engine()
 
         # disconnect from db
         updater.db_disconnect(conn)
         print("completed filling the table")
 
-syncher = DatabaseSyncher(time="14:01")
-syncher.synchTimer()
+if __name__ == "__main__":
+    """
+    main method:
+    only if this file is run, these commands should be executed
+    """
+    
+    syncher = DatabaseSyncher(time="22:00")
+    syncher.synchTimer()

@@ -159,7 +159,7 @@ class DatabaseUpdater:
 
         # cumulative stats
         old_df["num_cases"] = old_df["num_cases"].cumsum()
-        old_df = old_df.iloc[:,:-2]
+        old_df = old_df.iloc[:-2,:]
         return old_df
 
     def prediction_engine(self):
@@ -169,14 +169,14 @@ class DatabaseUpdater:
 
         # initialize
         predDf = self.cumulative_stats()
-        predDf = predDf(index = range(14))
+        #predDf = predDf(index = range(14))
 
         # formatting
         increases = predDf['num_cases'].to_numpy()
-        linear = np.arrange(increases + 1)
+        linear = np.arange(increases + 1)
 
         # predictions
-        x = np.polyfit(linear, increases,)
+        x = np.polyfit(linear, increases)
         p = np.poly1d(x)
         result = []
 

@@ -54,4 +54,17 @@ class test_DatasetCleaner(TestCase):
                      full_update=True)
 
         cleaner.read_globalhealth_data()
+
+        # check the confirmed cases variable - confirmed cases is initialized as None and is set to the new dataframe
+        self.assertTrue(cleaner.confirmed_cases != None)
+
+    def test_generate_ph_stats(self):
+        """
+        method to test the generate ph stats method
+        """
+
+        cleaner = DC(state_totals="https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/usmap_counts.csv",
+                     globalhealth_data="https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv",
+                     full_update=True)
+
         
