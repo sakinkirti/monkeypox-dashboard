@@ -169,7 +169,6 @@ class DatabaseUpdater:
 
         # initialize
         predDf = self.cumulative_stats()
-        #predDf = predDf(index = range(14))
 
         # formatting
         increases = predDf['num_cases'].to_numpy()
