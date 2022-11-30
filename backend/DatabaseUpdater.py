@@ -181,8 +181,8 @@ class DatabaseUpdater:
         p = np.poly1d(x)
         result = []
 
-        for value in newDf["num_cases"]:
-            result.append(p(value))
+        for value in range(1, 14):
+            result.append(p(value) + predDf.iloc[14]['num_cases'])
 
         newDf["is_predicted"] = result
         shortDf = newDf.head(14)
