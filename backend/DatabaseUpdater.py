@@ -158,20 +158,22 @@ class DatabaseUpdater:
         old_df = old_df.sort_values(by=["confirmed_date", "state_name"])
 
         # cumulative stats
-        old_df["num_cases"] = old_df["num_cases"].cumsum()
-        old_df = old_df.iloc[:-2,:]
+        # old_df["num_cases"] = old_df["num_cases"].cumsum()
+        old_df['num_cases'] = old_df.groupby('state_name')['new'].cumsum()
+        #old_df = old_df.iloc[:-2,:]
+        print(old_df.head(28))
         return old_df
 
     def prediction_engine(self):
         """
         method to predict case counts for next two weeks
         """
-
+        
         # initialize
         predDf = self.cumulative_stats()
-
+        newDf = predDf.iloc[:-2,:]
         # formatting
-        increases = predDf['num_cases'].to_numpy()
+        increases = newDf['num_cases'].to_numpy()
         linear = np.arange(increases + 1)
 
         # predictions
@@ -179,17 +181,18 @@ class DatabaseUpdater:
         p = np.poly1d(x)
         result = []
 
-        for value in predDf["is_predicted"]:
-            if value == None:
-                result.append(p(value))
+        for value in newDf["num_cases"]:
+            result.append(p(value))
 
-        predDf["is_predicted"] = result
+        newDf["is_predicted"] = result
+        shortDf = newDf.head(14)
 
         # update db
         conn = self.db_connect()
         cursor = conn.cursor()
         cursor.execute("DELETE from predictions")
-        self.fill_table(predDf, "predictions", conn, cursor)
+        self.fill_table(shortDf, "predictions", conn, cursor)
         self.db_disconnect(conn)
 
-        return predDf
+        return shortDf
+
