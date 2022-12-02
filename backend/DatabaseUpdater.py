@@ -3,7 +3,6 @@ from psycopg2 import extras
 import pandas as pd
 import numpy as np
 from DatasetCleaner import DatasetCleaner as DC
-
 class DatabaseUpdater:
     """
     authors: Sakin Kirti, Saketh Dendi, and Felix Huang
@@ -155,13 +154,13 @@ class DatabaseUpdater:
 
         # formatting
         old_df.rename(columns={0:"confirmed_date", 1: "state_name", 2:"num_cases", 3: "is_predicted"}, inplace = True)
-        old_df = old_df.sort_values(by=["confirmed_date", "state_name"])
+        old_df = old_df.sort_values(by=["state_name", "confirmed_date"])
 
         # cumulative stats
         # old_df["num_cases"] = old_df["num_cases"].cumsum()
-        old_df['num_cases'] = old_df.groupby('state_name')['new'].cumsum()
+        old_df['num_cases'] = old_df.groupby('state_name')['num_cases'].cumsum()
         #old_df = old_df.iloc[:-2,:]
-        print(old_df.head(28))
+        #print(old_df.tail(50))
         return old_df
 
     def prediction_engine(self):
@@ -171,21 +170,26 @@ class DatabaseUpdater:
         
         # initialize
         predDf = self.cumulative_stats()
-        newDf = predDf.iloc[:-2,:]
+        newDf = predDf[(predDf['state_name'] == 'Alabama')]
+        print(newDf)
         # formatting
         increases = newDf['num_cases'].to_numpy()
-        linear = np.arange(increases + 1)
+        linear = np.arange(0, increases.size)
 
         # predictions
-        x = np.polyfit(linear, increases)
+        x = np.polyfit(linear, increases, 0)
         p = np.poly1d(x)
         result = []
-
+        preDate = []
         for value in range(1, 14):
             result.append(p(value) + predDf.iloc[14]['num_cases'])
+            preDate.append(value)
 
-        newDf["is_predicted"] = result
-        shortDf = newDf.head(14)
+        #print(result)
+        #print(value)
+        stateDf = pd.DataFrame({'date': preDate, 'predicted': result, 'state': newDf.iloc[1]['state_name']})
+        shortDf = stateDf.head(14)
+        print(shortDf)
 
         # update db
         conn = self.db_connect()
@@ -196,3 +200,6 @@ class DatabaseUpdater:
 
         return shortDf
 
+DU = DatabaseUpdater()
+DU.cumulative_stats()
+DU.prediction_engine()
