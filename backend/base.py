@@ -7,13 +7,13 @@ app = Flask(__name__)
 @app.route('/api/cases')
 def db_retrieve_all_cumulative_state_cases():
     """
-    method to retrieve cumulative cases per day for all states in database
+    -method to retrieve cumulative cases per day for all states in database
+    -for use in pop up chart view
     """
 
     du = DU()
     conn = du.db_connect()
     cursor = conn.cursor()
-    print("hello")
     result = []
     states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
               "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
@@ -58,7 +58,8 @@ def db_retrieve_all_cumulative_state_cases():
 @app.route('/api/cases/total')
 def db_retrieve_per_day_state_cases():
     """
-    method to retrieve cases for all states in database
+    -method to retrieve cases for all states in database
+    -for use in cases table
     """
 
     du = DU()
@@ -90,7 +91,8 @@ def db_retrieve_per_day_state_cases():
 @app.route('/api/cases/state')
 def db_retrieve_state_cases():
     """
-    method to retrieve cumulative case counts per day for specific state in database
+    -method to retrieve cumulative case counts per day for specific state in database
+    -for use in ChartView
     """
     state = request.args.get('name')
     dataType = request.args.get('dataType')

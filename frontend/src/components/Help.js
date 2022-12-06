@@ -3,7 +3,7 @@ import { Container, Text, Heading, HStack, Image } from '@chakra-ui/react'
 
 const Help = () => {
     return (
-        <Container minWidth='full' minHeight='full' p={28}>
+        <Container minWidth='full' minHeight='full' p={28} pb={16}>
             <Heading pb={4}>Help</Heading>
             <Heading pb={2} fontSize={'xl'}>Introduction</Heading>
             <Text pb={2} fontSize={'l'}>
