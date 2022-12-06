@@ -10,6 +10,11 @@ const getUSTotalCases = async () => {
     return response.data
 }
 
+const getUSTotalCasesPerDay = async (dataType) => {
+    const response = await axios.get(`${baseUrl}/cases/USTotalPerDay`, { params: { dataType: dataType } })
+    return response.data
+}
+
 const getAllStateCases = async () => {
     const response = await axios.get(`${baseUrl}/cases`)
     return response.data
@@ -46,6 +51,7 @@ const getMapGeoJSON = async () => {
 
 const caseService = {
     getUSTotalCases,
+    getUSTotalCasesPerDay,
     getAllStateCases,
     getStateCases,
     getStateFlags,

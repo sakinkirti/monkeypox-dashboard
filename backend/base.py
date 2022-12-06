@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route('/api/cases')
 def db_retrieve_all_cumulative_state_cases():
     """
-    method to retrieve data for specific state in database
+    method to retrieve cumulative cases per day for all states in database
     """
 
     du = DU()
@@ -57,7 +57,7 @@ def db_retrieve_all_cumulative_state_cases():
 @app.route('/api/cases/total')
 def db_retrieve_per_day_state_cases():
     """
-    method to retrieve data for specific state in database
+    method to retrieve cases per day for all states in database
     """
 
     du = DU()
@@ -149,7 +149,53 @@ def db_retrieve_US_total_cases():
     return result
 
 
-@app.route('/api/phs')
+@app.route('/api/cases/USTotalPerDay')
+def db_retrieve_US_total_cases_per_day():
+    """
+    method to retrieve cumulative US cases per day in database
+    """
+
+    dataType = request.args.get('dataType')
+    print("Getting chart data for United States...")
+    print("Requested chart type: " + request.args.get('dataType'))
+    du = DU()
+    conn = du.db_connect()
+    cursor = conn.cursor()
+    cursor.execute("""SELECT DISTINCT confirmed_date
+                        FROM case_counts
+                        ORDER BY confirmed_date""")
+    dates = cursor.fetchall()
+    result = []
+    for date in dates:
+        raw = str(date) # raw ex. ('2022-11-19',)
+        formatted = raw[2:12] # filter to just get 2022-11-19
+        cursor.execute(f"""SELECT sum(total.num_cases) as total
+                            FROM (SELECT max(num_cases) as num_cases
+                                    FROM case_counts
+                                    WHERE confirmed_date='{formatted}'
+                                    GROUP BY confirmed_date, state_name, is_predicted) as total""")
+        num_cases = cursor.fetchall()[0][0]
+        result.append(({"date": formatted, "num_cases": num_cases}))
+    conn.close()
+    newResult = []
+    if dataType == "Cumulative":
+        for index, date in enumerate(result):
+                if index == 0:
+                    newResult.append({"date": date["date"], "num_cases": date["num_cases"]})
+                else:
+                    newResult.append({"date": date["date"], "num_cases": date["num_cases"]+newResult[index-1]["num_cases"]})
+    else:
+        for index, date in enumerate(result):
+            if index < 5:
+                continue
+            else:
+                cases = result[index-6:index+1]
+                casesSum = sum(day["num_cases"] for day in cases)
+                newResult.append({"date": date["date"], "num_cases": float(f'{casesSum/7:.2f}')})
+    return newResult
+
+
+@app.route('/api/prediction/phs')
 def db_retrieve_ph_stats():
     """
     method to retrieve US current and predictive public health stats from database
