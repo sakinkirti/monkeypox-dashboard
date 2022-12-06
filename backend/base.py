@@ -13,6 +13,7 @@ def db_retrieve_all_cumulative_state_cases():
     du = DU()
     conn = du.db_connect()
     cursor = conn.cursor()
+    print("hello")
     result = []
     states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
               "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
@@ -57,7 +58,7 @@ def db_retrieve_all_cumulative_state_cases():
 @app.route('/api/cases/total')
 def db_retrieve_per_day_state_cases():
     """
-    method to retrieve cases per day for all states in database
+    method to retrieve cases for all states in database
     """
 
     du = DU()
@@ -89,31 +90,50 @@ def db_retrieve_per_day_state_cases():
 @app.route('/api/cases/state')
 def db_retrieve_state_cases():
     """
-    method to retrieve case counts for specific state in database
+    method to retrieve cumulative case counts per day for specific state in database
     """
     state = request.args.get('name')
     dataType = request.args.get('dataType')
     print("Requested state: " + request.args.get('name'))
     print("Requested chart type: " + request.args.get('dataType'))
+    print("Getting data...")
     du = DU()
     conn = du.db_connect()
     cursor = conn.cursor()
-    cursor.execute(
-        f"""
-            SELECT
-                json_agg(
-                    json_build_object(
-                        'date', confirmed_date,
-                        'num_cases', num_cases
-                    )
-                ) as cases
-            FROM (SELECT *
-                    FROM case_counts
-                    WHERE state_name='{state}'
-                    ORDER BY confirmed_date) as sub_table
-        """
-    )
-    result = cursor.fetchall()[0][0]
+    result = []
+    if state == "United States":
+        cursor.execute("""SELECT DISTINCT confirmed_date
+                        FROM case_counts
+                        ORDER BY confirmed_date""")
+        dates = cursor.fetchall()
+        for date in dates:
+            raw = str(date) # raw ex. ('2022-11-19',)
+            formatted = raw[2:12] # filter to just get 2022-11-19
+            cursor.execute(f"""SELECT sum(total.num_cases) as total
+                                FROM (SELECT max(num_cases) as num_cases
+                                        FROM case_counts
+                                        WHERE confirmed_date='{formatted}'
+                                        GROUP BY confirmed_date, state_name, is_predicted) as total""")
+            num_cases = cursor.fetchall()[0][0]
+            result.append(({"date": formatted, "num_cases": num_cases}))
+    else:
+        cursor.execute(
+            f"""
+                SELECT
+                    json_agg(
+                        json_build_object(
+                            'date', confirmed_date,
+                            'num_cases', num_cases
+                        )
+                    ) as cases
+                FROM (SELECT *
+                        FROM case_counts
+                        WHERE state_name='{state}'
+                        ORDER BY confirmed_date) as sub_table
+            """
+        )
+        result = cursor.fetchall()[0][0]
+    conn.close()
     newResult = []
     if dataType == "Cumulative":
         for index, state in enumerate(result):
@@ -129,7 +149,6 @@ def db_retrieve_state_cases():
                 cases = result[index-6:index+1]
                 casesSum = sum(day["num_cases"] for day in cases)
                 newResult.append({"date": state["date"], "num_cases": float(f'{casesSum/7:.2f}')})
-    conn.close()
     return newResult
 
 
@@ -149,52 +168,6 @@ def db_retrieve_US_total_cases():
     return result
 
 
-@app.route('/api/cases/USTotalPerDay')
-def db_retrieve_US_total_cases_per_day():
-    """
-    method to retrieve cumulative US cases per day in database
-    """
-
-    dataType = request.args.get('dataType')
-    print("Getting chart data for United States...")
-    print("Requested chart type: " + request.args.get('dataType'))
-    du = DU()
-    conn = du.db_connect()
-    cursor = conn.cursor()
-    cursor.execute("""SELECT DISTINCT confirmed_date
-                        FROM case_counts
-                        ORDER BY confirmed_date""")
-    dates = cursor.fetchall()
-    result = []
-    for date in dates:
-        raw = str(date) # raw ex. ('2022-11-19',)
-        formatted = raw[2:12] # filter to just get 2022-11-19
-        cursor.execute(f"""SELECT sum(total.num_cases) as total
-                            FROM (SELECT max(num_cases) as num_cases
-                                    FROM case_counts
-                                    WHERE confirmed_date='{formatted}'
-                                    GROUP BY confirmed_date, state_name, is_predicted) as total""")
-        num_cases = cursor.fetchall()[0][0]
-        result.append(({"date": formatted, "num_cases": num_cases}))
-    conn.close()
-    newResult = []
-    if dataType == "Cumulative":
-        for index, date in enumerate(result):
-                if index == 0:
-                    newResult.append({"date": date["date"], "num_cases": date["num_cases"]})
-                else:
-                    newResult.append({"date": date["date"], "num_cases": date["num_cases"]+newResult[index-1]["num_cases"]})
-    else:
-        for index, date in enumerate(result):
-            if index < 5:
-                continue
-            else:
-                cases = result[index-6:index+1]
-                casesSum = sum(day["num_cases"] for day in cases)
-                newResult.append({"date": date["date"], "num_cases": float(f'{casesSum/7:.2f}')})
-    return newResult
-
-
 @app.route('/api/prediction/phs')
 def db_retrieve_ph_stats():
     """
@@ -208,6 +181,32 @@ def db_retrieve_ph_stats():
     conn.close()
     return result
 
+@app.route('/api/prediction/cases')
+def retrieve_cumulative_cases_prediction():
+    """
+    method to retrieve 14 day case count progression
+    """
+    state = request.args.get('state')
+    du = DU()
+    conn = du.db_connect()
+    cursor = conn.cursor()
+    if state == "United States":
+        cursor.execute("""SELECT sum(num_cases) as num_cases
+                            FROM predictions
+                            GROUP BY date
+                            ORDER BY CAST(date AS int)""")
+    else:
+        cursor.execute(f"SELECT * FROM predictions WHERE state='{state}'")
+    result = cursor.fetchall()
+    conn.close()
+    formatted = []
+    for date in result:
+        if state == "United States":
+            formatted.append(date[0])
+        else:
+            formatted.append(date[2])
+    return formatted
+        
 
 if __name__ == '__main__':
     app.run(debug=True)

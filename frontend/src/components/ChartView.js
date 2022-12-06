@@ -2,6 +2,7 @@ import { React, useEffect, useState } from 'react'
 import { LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Line, Legend, Label } from 'recharts'
 import { Container, Text, Icon, HStack, Tabs, TabList, Tab, Heading } from '@chakra-ui/react'
 import caseService from '../services/cases'
+import predictionService from '../services/predictionFetch'
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -25,48 +26,27 @@ const ChartView = ({ state, chartType, setChartType }) => {
     const [data, setData] = useState([])
 
     useEffect(() => {
-        if (state === "United States") {
-            caseService.getUSTotalCasesPerDay(chartType).then(res => {
-                var modified = res
-                var currentTime = new Date();
-                for (let i = 1; i <= 14; i++) {
-                    currentTime.setDate(currentTime.getDate() + 1)
-                    const formattedDate = new Date(currentTime).toLocaleDateString('en-CA')
-                    var predicted_cases = null
-                    if (i === 1) {
-                        predicted_cases = modified[modified.length - 1].num_cases + Math.floor(Math.random()*100)
-                    } else {
-                        predicted_cases = chartType === "Cumulative" 
-                        ? modified[modified.length - 1].predicted_cases + Math.floor(Math.random()*100)
-                        : (Math.floor(Math.random()*300)+400).toFixed(2)
-                    }
-                    const pred = ({ "date": formattedDate.toString(), "predicted_cases": predicted_cases })
-                    modified.push(pred)
+        var predictions = []
+        predictionService.getProgression(state).then(res => {
+            predictions = res
+        })
+        caseService.getStateCases(state, chartType).then(res => {
+            var modified = res
+            var currentTime = new Date();
+            for (let i = 0; i < 14; i++) {
+                currentTime.setDate(currentTime.getDate() + 1)
+                const formattedDate = new Date(currentTime).toLocaleDateString('en-CA')
+                var predicted_cases = null
+                if (i === 0) {
+                    predicted_cases = modified[modified.length - 1].num_cases + predictions[i]
+                } else {
+                    predicted_cases = modified[modified.length - 1].predicted_cases + predictions[i]
                 }
-                setData(modified)
-            })
-        } else {
-            caseService.getStateCases(state, chartType).then(res => {
-                var modified = res
-                var currentTime = new Date();
-                for (let i = 1; i <= 14; i++) {
-                    currentTime.setDate(currentTime.getDate() + 1)
-                    const formattedDate = new Date(currentTime).toLocaleDateString('en-CA')
-                    var predicted_cases = null
-                    if (i === 1) {
-                        predicted_cases = modified[modified.length - 1].num_cases + Math.floor(Math.random())
-                    } else {
-                        predicted_cases = chartType === "Cumulative" 
-                        ? modified[modified.length - 1].predicted_cases + Math.floor(Math.random() * 2) 
-                        : (Math.random()/3).toFixed(2)
-                    }
-                    const pred = ({ "date": formattedDate.toString(), "predicted_cases": predicted_cases })
-                    modified.push(pred)
-                }
-                setData(modified)
-                // setData(res)
-            })
-        }
+                const pred = ({ "date": formattedDate.toString(), "predicted_cases": chartType === "Cumulative" ? predicted_cases : (predicted_cases / 7).toFixed(2) })
+                modified.push(pred)
+            }
+            setData(modified)
+        })
     }, [state, chartType])
 
     return (

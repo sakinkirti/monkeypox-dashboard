@@ -208,6 +208,6 @@ class DatabaseUpdater:
         fit = np.polyfit(x, y, 1)
         return np.poly1d(fit)[0]
 
-DU = DatabaseUpdater()
-# DU.cumulative_stats()
-DU.prediction_engine()
+# DU = DatabaseUpdater()
+# # DU.cumulative_stats()
+# DU.prediction_engine()
