@@ -47,13 +47,13 @@ const Navbar = () => {
                             />
                             <MenuList>
                                 <Link to="/">
-                                    <MenuItem as="a">Map</MenuItem>
+                                    <MenuItem>Map</MenuItem>
                                 </Link>
                                 <Link to="/charts">
-                                    <MenuItem as="a">Charts</MenuItem>
+                                    <MenuItem>Charts</MenuItem>
                                 </Link>
                                 <Link to="/help">
-                                    <MenuItem as="a">Help</MenuItem>
+                                    <MenuItem>Help</MenuItem>
                                 </Link>
                             </MenuList>
                         </Menu>
