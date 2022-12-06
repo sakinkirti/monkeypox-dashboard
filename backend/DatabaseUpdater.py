@@ -189,10 +189,10 @@ class DatabaseUpdater:
             preDate = []
             newDf['is_predicted'] = newDf['num_cases'].rolling(14).apply(lambda s: linregress(s.reset_index())[0])
 
-            for value in range(1, 14):
+            for value in range(1, 15):
                 preDate.append(value)
 
-            df = newDf['is_predicted'].iloc[-13:]
+            df = newDf['is_predicted'].iloc[-14:]
             tempDf = pd.DataFrame({'date': preDate, 'state': newDf.iloc[1]['state_name'],'num_cases': df})
             stateDf = pd.concat([stateDf, tempDf])
         print(stateDf)
@@ -209,5 +209,5 @@ class DatabaseUpdater:
         return np.poly1d(fit)[0]
 
 DU = DatabaseUpdater()
-DU.cumulative_stats()
+# DU.cumulative_stats()
 DU.prediction_engine()
