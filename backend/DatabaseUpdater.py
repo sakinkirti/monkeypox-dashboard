@@ -3,6 +3,9 @@ from psycopg2 import extras
 import pandas as pd
 import numpy as np
 from DatasetCleaner import DatasetCleaner as DC
+from scipy.stats import linregress
+
+
 class DatabaseUpdater:
     """
     authors: Sakin Kirti, Saketh Dendi, and Felix Huang
@@ -170,35 +173,40 @@ class DatabaseUpdater:
         
         # initialize
         predDf = self.cumulative_stats()
-        newDf = predDf[(predDf['state_name'] == 'Alabama')]
-        print(newDf)
-        # formatting
-        increases = newDf['num_cases'].to_numpy()
-        linear = np.arange(0, increases.size)
+        states=["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", 
+                "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", 
+                "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", 
+                "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
+        stateDf = pd.DataFrame()
+        for state in states:
+            newDf = predDf[(predDf['state_name'] == state)]
 
-        # predictions
-        x = np.polyfit(linear, increases, 0)
-        p = np.poly1d(x)
-        result = []
-        preDate = []
-        for value in range(1, 14):
-            result.append(p(value) + predDf.iloc[14]['num_cases'])
-            preDate.append(value)
+            # formatting
+            increases = newDf['num_cases'].to_numpy()
+            linear = np.arange(0, increases.size)
 
-        #print(result)
-        #print(value)
-        stateDf = pd.DataFrame({'date': preDate, 'predicted': result, 'state': newDf.iloc[1]['state_name']})
-        shortDf = stateDf.head(14)
-        print(shortDf)
+            # predictions
+            preDate = []
+            newDf['is_predicted'] = newDf['num_cases'].rolling(14).apply(lambda s: linregress(s.reset_index())[0])
 
+            for value in range(1, 14):
+                preDate.append(value)
+
+            df = newDf['is_predicted'].iloc[-13:]
+            tempDf = pd.DataFrame({'date': preDate, 'state': newDf.iloc[1]['state_name'],'num_cases': df})
+            stateDf = pd.concat([stateDf, tempDf])
+        print(stateDf)
         # update db
         conn = self.db_connect()
         cursor = conn.cursor()
         cursor.execute("DELETE from predictions")
-        self.fill_table(shortDf, "predictions", conn, cursor)
+        self.fill_table(stateDf, "predictions", conn, cursor)
         self.db_disconnect(conn)
 
-        return shortDf
+
+    def slope_numpy(x,y):
+        fit = np.polyfit(x, y, 1)
+        return np.poly1d(fit)[0]
 
 DU = DatabaseUpdater()
 DU.cumulative_stats()
