@@ -103,7 +103,7 @@ const CasesTable = ({ top, setState, view, setMarkerIndex }) => {
     )
 }
 
-const USTable = ({ top }) => {
+const USTable = (props) => {
     const [cases, setCases] = useState(null)
 
     useEffect(() => {
@@ -115,12 +115,22 @@ const USTable = ({ top }) => {
     return (
         <Box
             position='absolute'
-            top={top}
+            top={props.top}
+            right={props.right}
             p={4}
             bg='rgba(250,250,250,0.8)'
             color='black'
             zIndex={15}
             display={['none', 'none', 'block', 'block']}
+            onClick={(e) => {
+                if (props.view === "Chart") {
+                    console.log('clicked')
+                    props.setState("United States")
+                }
+            }}
+            cursor={props.view === "Chart" ? 'pointer' : ''}
+            _hover={props.view === "Chart" ? { bg: "gray.200" } : {}}
+            _active={props.view === "Chart" ? { bg: "gray.100" } : {}}
         >
             <Heading fontSize={20} pb={5} textAlign='center' as='b'>U.S. Total Confirmed Cases</Heading>
             <Text fontSize={20} textAlign='center'>{cases}</Text>

@@ -9,8 +9,12 @@ const CustomTooltip = ({ active, payload, label }) => {
             <Container p={4} bg='rgba(250,250,250,0.8)' color='black'>
                 <Text as='b'>{label}</Text>
                 <HStack>
-                    <LineIcon boxSize={4} color='#EBFCF9' />
-                    <Text color='#0E6495'>{`Case count: ${payload[0].payload.num_cases}`}</Text>
+                    {payload[0].payload.num_cases !== undefined
+                        ? <LineIcon boxSize={4} color='#EBFCF9' />
+                        : null}
+                    {payload[0].payload.num_cases !== undefined
+                        ? <Text color='#0E6495'>{`Case count: ${payload[0].payload.num_cases}`}</Text>
+                        : <Text color='#8884d8'>{`Predicted case count: ${payload[0].payload.predicted_cases}`}</Text>}
                 </HStack>
             </Container>
         )
@@ -21,9 +25,48 @@ const ChartView = ({ state, chartType, setChartType }) => {
     const [data, setData] = useState([])
 
     useEffect(() => {
-        caseService.getStateCases(state, chartType).then(res => {
-            setData(res)
-        })
+        if (state === "United States") {
+            caseService.getUSTotalCasesPerDay(chartType).then(res => {
+                var modified = res
+                var currentTime = new Date();
+                for (let i = 1; i <= 14; i++) {
+                    currentTime.setDate(currentTime.getDate() + 1)
+                    const formattedDate = new Date(currentTime).toLocaleDateString('en-CA')
+                    var predicted_cases = null
+                    if (i === 1) {
+                        predicted_cases = modified[modified.length - 1].num_cases + Math.floor(Math.random()*100)
+                    } else {
+                        predicted_cases = chartType === "Cumulative" 
+                        ? modified[modified.length - 1].predicted_cases + Math.floor(Math.random()*100)
+                        : (Math.floor(Math.random()*300)+400).toFixed(2)
+                    }
+                    const pred = ({ "date": formattedDate.toString(), "predicted_cases": predicted_cases })
+                    modified.push(pred)
+                }
+                setData(modified)
+            })
+        } else {
+            caseService.getStateCases(state, chartType).then(res => {
+                var modified = res
+                var currentTime = new Date();
+                for (let i = 1; i <= 14; i++) {
+                    currentTime.setDate(currentTime.getDate() + 1)
+                    const formattedDate = new Date(currentTime).toLocaleDateString('en-CA')
+                    var predicted_cases = null
+                    if (i === 1) {
+                        predicted_cases = modified[modified.length - 1].num_cases + Math.floor(Math.random())
+                    } else {
+                        predicted_cases = chartType === "Cumulative" 
+                        ? modified[modified.length - 1].predicted_cases + Math.floor(Math.random() * 2) 
+                        : (Math.random()/3).toFixed(2)
+                    }
+                    const pred = ({ "date": formattedDate.toString(), "predicted_cases": predicted_cases })
+                    modified.push(pred)
+                }
+                setData(modified)
+                // setData(res)
+            })
+        }
     }, [state, chartType])
 
     return (
@@ -68,6 +111,14 @@ const ChartView = ({ state, chartType, setChartType }) => {
                         dataKey="num_cases"
                         stroke="#0E6495"
                         dot={false}
+                    />
+                    <Line
+                        name={chartType === "Cumulative" ? "Predicted Case Count" : "7-day Case Count Moving Average"}
+                        type="monotone"
+                        dataKey="predicted_cases"
+                        stroke="#8884d8"
+                        dot={false}
+                        strokeDasharray="5 5"
                     />
                 </LineChart>
             </ResponsiveContainer>
