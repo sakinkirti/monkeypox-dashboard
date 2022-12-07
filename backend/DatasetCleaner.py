@@ -1,6 +1,8 @@
 import datetime
 import pandas as pd
-import random
+import numpy as np
+
+from sklearn.linear_model import LinearRegression
 
 class DatasetCleaner:
     """
@@ -123,7 +125,6 @@ class DatasetCleaner:
         method to clean the data from global.health
         """
 
-        # initialize the updater to 
         from DatabaseUpdater import DatabaseUpdater as DU
         updater = DU()
 
@@ -160,26 +161,44 @@ class DatasetCleaner:
         case-fatality rate: (number of deaths) / (number of cases) * 1000
         """
 
+        from DatabaseUpdater import DatabaseUpdater as DU
+        updater = DU()
+
         # us population
         pop = 332403650
-
         ph_table = pd.DataFrame(columns=["prevalence_curr", "incidence_curr", "cf_ratio_curr", "prevalence_pred", "incidence_pred", "cf_ratio_pred"])
 
         # current prevalence rate - cumulative cases / population per 1000 people
         p_curr = (self.cdc_data["Cases"].sum() / pop) * 1000
-
         # current incidence rate - new cases / population per 1000 people
         i_curr = (self.confirmed_cases["num_cases"].sum() / pop) * 1000
-
         # current case fatality ratio - cumulative cases / cumulative deaths per 1000 people
-        cf_curr = (9 / self.cdc_data["Cases"].sum()) * 1000
+        cf_curr = (20 / self.cdc_data["Cases"].sum()) * 1000
 
-        # the predicted values are unlikely to change, seeing how case counts are fairly low - can add some small random value
-        p_pred = p_curr + (random.randint(-1000, 1000) / 1000000)
-        i_pred = i_curr + (random.randint(-1000, 1000) / 1000000)
-        cf_pred = cf_curr + (random.randint(-1000, 1000) / 1000000)
+        # initialize and create necessary tables for ph predictions
+        df = pd.DataFrame(updater.db_retrieve("ph_stats"))
+        df.rename(columns={0:"prevalence_curr", 1:"incidence_curr", 2:"cf_ratio_curr", 3:"prevalence_pred", 4:"incidence_pred", 5:"cf_ratio_pred"}, inplace=True)
+
+        # get numpy of each current stat
+        prev = df["prevalence_curr"].to_numpy().reshape((1, -1))
+        inci = df["incidence_curr"].to_numpy().reshape((1, -1))
+        cf_r = df["cf_ratio_curr"].to_numpy().reshape((1, -1))
+
+        # generate x values
+        exes = np.arange(0, len(prev)).reshape((-1, 1))
+
+        # create models for each
+        prev_model = LinearRegression().fit(exes, prev)
+        inci_model = LinearRegression().fit(exes, inci)
+        cf_r_model = LinearRegression().fit(exes, cf_r)
+
+        # generate predictions for new day
+        p_pred = prev_model.predict(np.array([len(prev)]).reshape((1, -1)))
+        i_pred = inci_model.predict(np.array([len(inci)]).reshape((1, -1)))
+        cf_pred = cf_r_model.predict(np.array([len(cf_r)]).reshape((1, -1)))
 
         # add to table
-        ph_table.loc[0] = [p_curr, i_curr, cf_curr, p_pred, i_pred, cf_pred]
+        ph_table.loc[0] = [p_curr, i_curr, cf_curr, p_pred[0][0], i_pred[0][0], cf_pred[0][0]]
         self.ph_stats = ph_table
 
+        return ph_table

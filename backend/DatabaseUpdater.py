@@ -203,11 +203,6 @@ class DatabaseUpdater:
         self.fill_table(stateDf, "predictions", conn, cursor)
         self.db_disconnect(conn)
 
-
     def slope_numpy(x,y):
         fit = np.polyfit(x, y, 1)
         return np.poly1d(fit)[0]
-
-# DU = DatabaseUpdater()
-# # DU.cumulative_stats()
-# DU.prediction_engine()
