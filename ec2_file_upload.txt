@@ -4,6 +4,10 @@ Notes:
 - This short tutorial uses the scp protocol to securely transfer files from the local machine to the ec2 instance.
 - These instructions assume that the user previously has generated a pem file with proper encryption. If encryption is needed, run the following command in the terminal of the local machine
     >>> chmod 400 /path/to/pem/file
+- For information on viewing the running programs, use this command in the ec2 instance
+    >>> screen ls
+- Use this link for other ec2 instance commands for running jobs
+    https://dev.to/akhileshthite/how-to-keep-ec2-instance-running-after-ssh-is-terminated-45k8
 
 1. Launch and connect to the ec2 instance from AWS
 2. Locate the instance id. It will look something like: ec2-user@ec2-52-86-173-111.compute-1.amazonaws.com (In our case, this is actually our ec2 instance id)
