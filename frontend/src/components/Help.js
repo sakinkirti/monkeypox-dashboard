@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Text, Heading, HStack, Image } from '@chakra-ui/react'
+import { Container, Text, Heading, HStack, Image, Link } from '@chakra-ui/react'
 
 const Help = () => {
     return (
@@ -14,8 +14,10 @@ const Help = () => {
             <br />
             <Heading pb={2} fontSize={'xl'}>Information About Data Sources</Heading>
             <Text pb={2} fontSize={'l'}>
-                Data about confirmed cases that is displayed in the map and chart views is taken from Global.health and the CDC.
-                Data is updated daily.
+                Data about confirmed cases that is displayed in the map and chart views is taken from {' '}
+                <Link color={'#3366CC'} href='https://github.com/globaldothealth/monkeypox'>Global.health</Link>{' '}
+                and the <Link color={'#3366CC'} href='https://www.cdc.gov/poxvirus/monkeypox/response/2022/us-map.html'>CDC</Link>.
+                Data is updated weekly on Wednesdays by the CDC.
             </Text>
             <br />
             <Heading pb={2} fontSize={'xl'}>Map Guide</Heading>
