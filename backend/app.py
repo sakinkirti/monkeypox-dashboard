@@ -1,7 +1,17 @@
-from flask import Flask
-from flask import request
+import os
+from flask import Flask, request, send_from_directory
 from DatabaseUpdater import DatabaseUpdater as DU
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../frontend/build")
+
+
+# Serve React App
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 
 @app.route('/api/cases')
@@ -211,4 +221,4 @@ def retrieve_cumulative_cases_prediction():
         
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(use_reloader=True, port=5000, threaded=True)
