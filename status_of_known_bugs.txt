@@ -1,0 +1,1 @@
+All known bugs have been resolved. Please see the GitHub issues section for a list of our closed issues.

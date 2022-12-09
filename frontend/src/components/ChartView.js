@@ -49,8 +49,6 @@ const ChartView = ({ state, chartType, setChartType }) => {
         })
     }, [state, chartType])
 
-    console.log(data)
-
     return (
         <Container minWidth='100%' minHeight='100vh' pt={28} pl={8} display={['none', 'none', 'flex', 'flex']} centerContent>
             <Heading fontSize={20} mb={4}>{state}</Heading>
