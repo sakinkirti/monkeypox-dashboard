@@ -15,7 +15,7 @@ const CustomTooltip = ({ active, payload, label }) => {
                         : null}
                     {payload[0].payload.num_cases !== undefined
                         ? <Text color='#0E6495'>{`Case count: ${payload[0].payload.num_cases}`}</Text>
-                        : <Text color='#8884d8'>{`Predicted case count: ${payload[0].payload.predicted_cases}`}</Text>}
+                        : <Text color='#8884d8'>{`Predicted case count: ${(isNaN(payload[0].payload.predicted_cases) ? 0.0 : payload[0].payload.predicted_cases)}`}</Text>}
                 </HStack>
             </Container>
         )
@@ -42,7 +42,7 @@ const ChartView = ({ state, chartType, setChartType }) => {
                 } else {
                     predicted_cases = modified[modified.length - 1].predicted_cases + predictions[i]
                 }
-                const pred = ({ "date": formattedDate.toString(), "predicted_cases": chartType === "Cumulative" ? predicted_cases : (predicted_cases / 7).toFixed(2) })
+                const pred = ({ "date": formattedDate.toString(), "predicted_cases": chartType === "Cumulative" ? predicted_cases : (predicted_cases / 2).toFixed(2) })
                 modified.push(pred)
             }
             setData(modified)
@@ -93,7 +93,7 @@ const ChartView = ({ state, chartType, setChartType }) => {
                         dot={false}
                     />
                     <Line
-                        name={chartType === "Cumulative" ? "Predicted Case Count" : "7-day Case Count Moving Average"}
+                        name={chartType === "Cumulative" ? "Predicted Case Count" : "7-day Case Count Moving Average Predictions"}
                         type="monotone"
                         dataKey="predicted_cases"
                         stroke="#8884d8"
