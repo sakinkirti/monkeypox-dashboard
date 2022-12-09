@@ -29,25 +29,27 @@ const ChartView = ({ state, chartType, setChartType }) => {
         var predictions = []
         predictionService.getProgression(state).then(res => {
             predictions = res
-        })
-        caseService.getStateCases(state, chartType).then(res => {
-            var modified = res
-            var currentTime = new Date();
-            for (let i = 0; i < 14; i++) {
-                currentTime.setDate(currentTime.getDate() + 1)
-                const formattedDate = new Date(currentTime).toLocaleDateString('en-CA')
-                var predicted_cases = null
-                if (i === 0) {
-                    predicted_cases = modified[modified.length - 1].num_cases + predictions[i]
-                } else {
-                    predicted_cases = modified[modified.length - 1].predicted_cases + predictions[i]
+            caseService.getStateCases(state, chartType).then(res => {
+                var modified = res
+                var currentTime = new Date();
+                for (let i = 0; i < 14; i++) {
+                    currentTime.setDate(currentTime.getDate() + 1)
+                    const formattedDate = new Date(currentTime).toLocaleDateString('en-CA')
+                    var predicted_cases = null
+                    if (i === 0) {
+                        predicted_cases = modified[modified.length - 1].num_cases + predictions[i]
+                    } else {
+                        predicted_cases = modified[modified.length - 1].predicted_cases + predictions[i]
+                    }
+                    const pred = ({ "date": formattedDate.toString(), "predicted_cases": chartType === "Cumulative" ? predicted_cases : (predicted_cases / 2).toFixed(2) })
+                    modified.push(pred)
                 }
-                const pred = ({ "date": formattedDate.toString(), "predicted_cases": chartType === "Cumulative" ? predicted_cases : (predicted_cases / 2).toFixed(2) })
-                modified.push(pred)
-            }
-            setData(modified)
+                setData(modified)
+            })
         })
     }, [state, chartType])
+
+    console.log(data)
 
     return (
         <Container minWidth='100%' minHeight='100vh' pt={28} pl={8} display={['none', 'none', 'flex', 'flex']} centerContent>
